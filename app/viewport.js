@@ -1,3 +1,8 @@
+/**
+ * Requires Greensock TweenLite for animation
+ * 
+ * @type {Walk.viewport}
+ */
 Walk.viewport = {
 
 	containerEl: null,
@@ -34,7 +39,11 @@ Walk.viewport = {
 		this.initControls(this.camera, this.containerEl);
 
 	 	this.render();
-	 	this.animate();
+
+	 	// start animation loop
+	 	TweenLite.ticker.addEventListener("tick", this.animate.bind(this));
+
+		this.world.startTimeline();
 
 	 	return this;
 	},
@@ -154,11 +163,6 @@ Walk.viewport = {
     },
 		
 	animate: function() {
-		// note: three.js includes requestAnimationFrame shim
-	    requestAnimationFrame( this.animate.bind(this) );
-
-		this.world.update();
-
 		this.controls.update();
 
 		this.render();

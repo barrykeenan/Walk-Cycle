@@ -2,8 +2,10 @@
 
 /**
  * Scene with props
+ *
+ * Requires Greensock TweenLite for animation
  * 
- * @type {[type]}
+ * @type {Walk.world}
  */
 Walk.world = {
 	materials: null,
@@ -12,17 +14,17 @@ Walk.world = {
 	initialize: function(materialFactory){
 		this.materials = materialFactory;
 
-    	this.alpha = 0;
-    	this.increasing = true;
-
 		return this;
 	},
 
+	/**
+	 * Called from Viewport
+	 */
 	addProps: function() {
 
-		this.pivot = new THREE.Object3D();
-		this.pivot.position.y = 200;
-		this.scene.add( this.pivot );
+		this.hipPivot = new THREE.Object3D();
+		this.hipPivot.position.y = 200;
+		this.scene.add( this.hipPivot );
 
 
 		var radiusTop = 50,
@@ -38,40 +40,20 @@ Walk.world = {
 	 	);
         this.cylinder.overdraw = true;
         this.cylinder.position.y = -100;
-        this.pivot.add(this.cylinder);
+        this.hipPivot.add(this.cylinder);
     },
 
-    update: function() {
-
-    	// values between -1..0..1
-    	// or?
-    	// values between 0..1..0
-
-		var speed = 0.01;
-
-		if(this.increasing) {
-			if(this.alpha >= 1) {
-				this.increasing = false;
-			}
-			else{
-				this.alpha += speed;
-			}
-		}
-		else {
-			if(this.alpha <= -1) {
-				this.increasing = true;
-			}
-			else{
-				this.alpha -= speed;
-			}	
-		}
+    /**
+	 * Called from Viewport
+	 */
+	startTimeline: function() {
 		
-
-		// rotation in radians?
-		var rads = this.alpha * (Math.PI/4);
-
-	    this.pivot.rotation.z = rads;
-    }
+		TweenLite.to(this.hipPivot.rotation, 2, {
+			z: -Math.PI
+			// ease: Bounce.easeOut
+			// delay: i*0.2
+		});
+	}
 	
 };
 
@@ -81,4 +63,6 @@ var viewport = Walk.viewport.initialize({
 	containerEl: document.body,
 	world: world
 });
+
+
 
