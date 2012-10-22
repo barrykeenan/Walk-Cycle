@@ -124,7 +124,7 @@ Walk.viewport = {
 		this.camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR );
 
     	// the camera starts at 0,0,0 so pull it back
-		this.camera.position.set( 500, 250, 500 );
+		this.camera.position.set( 300, 250, 800 );
 		this.camera.lookAt( this.scene.position );
 		this.scene.add( this.camera );
 	},
@@ -147,7 +147,7 @@ Walk.viewport = {
 
 		var sphere1 = new THREE.Mesh(
 			new THREE.SphereGeometry(radius, segments, rings),
-			this.materials.otherMaterial()
+			this.materials.solid()
 		);
 		sphere1.position.x = -200;
 
@@ -155,7 +155,7 @@ Walk.viewport = {
 		
 		var sphere2 = new THREE.Mesh(
 			new THREE.SphereGeometry(radius, segments, rings),
-			this.materials.otherMaterial()
+			this.materials.solid()
 		);
 		sphere2.position.x = 200;
 
