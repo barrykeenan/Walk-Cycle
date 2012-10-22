@@ -23,8 +23,7 @@ Walk.world = {
 	addProps: function() {
 
 		this.hipPivot = new THREE.Object3D();
-		this.hipPivot.position.y = 400;
-		// this.hipPivot.rotation.z = Math.PI/4;
+		this.hipPivot.position.y = 435;
 		this.scene.add( this.hipPivot );
 
 
@@ -64,6 +63,30 @@ Walk.world = {
 	 	);
         this.calf.position.y = -100;
         this.knee.add(this.calf);
+
+        //
+
+		this.ankle = new THREE.Mesh(
+	 		new THREE.SphereGeometry(28),
+	 		this.materials.solid()
+	 	);
+        this.ankle.position.y = -100;
+        this.calf.add(this.ankle);
+
+        //
+
+        radiusTop = 35,
+		radiusBottom = 40,
+		height = 30;
+
+		this.foot = new THREE.Mesh(
+	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
+	 		this.materials.solid()
+	 	);
+        this.foot.scale.x = 2;
+        this.foot.position.y = -20;
+        this.foot.position.x = 30;
+        this.ankle.add(this.foot);
     },
 
     /**
@@ -79,6 +102,11 @@ Walk.world = {
 		var kneeTween = TweenMax.fromTo(this.knee.rotation, 2,
 			{ z: 0 },
 			{ z: -Math.PI/4, repeat: -1, yoyo: true, ease: Power2.easeInOut }
+		);
+
+		var ankleTween = TweenMax.fromTo(this.ankle.rotation, 2,
+			{ z: 0 },
+			{ z: Math.PI/8, repeat: -1, yoyo: true, ease: Power2.easeInOut }
 		);
 
 	}
