@@ -77,7 +77,7 @@ Walk.viewport = {
 		this.controls.dynamicDampingFactor = 0.3;
 
 		// set scope to this
-		this.controls.addEventListener( 'change', this.render.bind(this) );
+		// this.controls.addEventListener( 'change', this.render.bind(this) );
     },
 
 	addSceneHelpers: function() {
