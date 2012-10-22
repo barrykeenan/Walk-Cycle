@@ -24,6 +24,7 @@ Walk.world = {
 
 		this.hipPivot = new THREE.Object3D();
 		this.hipPivot.position.y = 200;
+		// this.hipPivot.rotation.z = Math.PI/4;
 		this.scene.add( this.hipPivot );
 
 
@@ -47,14 +48,14 @@ Walk.world = {
 	 * Called from Viewport
 	 */
 	startTimeline: function() {
-		
-		TweenLite.to(this.hipPivot.rotation, 2, {
-			z: -Math.PI
-			// ease: Bounce.easeOut
-			// delay: i*0.2
-		});
+
+		var hipTween = TweenMax.fromTo(this.hipPivot.rotation, 2,
+			{ z: Math.PI/4 },
+			{ z: -Math.PI/4, repeat: -1, yoyo: true, ease: Power2.easeInOut }
+		);
+
 	}
-	
+
 };
 
 var world = Walk.world.initialize(Walk.materialFactory);

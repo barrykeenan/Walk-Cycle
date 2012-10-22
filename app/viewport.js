@@ -41,7 +41,7 @@ Walk.viewport = {
 	 	this.render();
 
 	 	// start animation loop
-	 	TweenLite.ticker.addEventListener("tick", this.animate.bind(this));
+	 	TweenMax.ticker.addEventListener("tick", this.animate.bind(this));
 
 		this.world.startTimeline();
 
