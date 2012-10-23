@@ -71,6 +71,7 @@ Walk.world = {
 	 		this.materials.solid()
 	 	);
         this.ankle.position.y = -100;
+        this.ankle.rotation.z = Math.PI/6;
         this.calf.add(this.ankle);
 
         //
@@ -94,21 +95,128 @@ Walk.world = {
 	 */
 	startTimeline: function() {
 
-		var hipTween = TweenMax.fromTo(this.hipPivot.rotation, 2,
-			{ z: Math.PI/4 },
-			{ z: -Math.PI/4, repeat: -1, yoyo: true, ease: Power2.easeInOut }
+		// Setup a timeline object
+		var timeline = new TimelineMax();
+		var tweens = [];
+
+		timeline.append('start');
+
+		timeline.insert(
+			TweenMax.fromTo(this.hipPivot.rotation, 2,
+				{ z: Math.PI/6 },
+				{ z: Math.PI/48 }
+			)
 		);
 
-		var kneeTween = TweenMax.fromTo(this.knee.rotation, 2,
-			{ z: 0 },
-			{ z: -Math.PI/4, repeat: -1, yoyo: true, ease: Power2.easeInOut }
+		timeline.insert(
+			TweenMax.fromTo(this.knee.rotation, 2,
+				{ z: 0 },
+				{ z: -Math.PI/2 }
+			)
 		);
 
-		var ankleTween = TweenMax.fromTo(this.ankle.rotation, 2,
-			{ z: 0 },
-			{ z: Math.PI/8, repeat: -1, yoyo: true, ease: Power2.easeInOut }
+		timeline.insert(
+			TweenMax.fromTo(this.knee.rotation, 2,
+				{ z: 0 },
+				{ z: -Math.PI/24 }
+			)
 		);
 
+		timeline.insert('strike', 1);
+
+		timeline.insert(
+			TweenMax.to(this.ankle.rotation, 0.5,
+				{ z: 0 }
+			),
+			1
+		);
+
+		timeline.append('weight');
+
+		timeline.insert(
+			TweenMax.to(this.hipPivot.rotation, 2,
+				{ z: Math.PI/12 }
+			),
+			2 // use array of label: time
+		);		
+
+		timeline.insert(
+			TweenMax.to(this.hipPivot.position, 2,
+				{ y: this.hipPivot.position.y - 10 }
+			),
+			2 // use array of label: time
+		);
+
+		timeline.insert(
+			TweenMax.to(this.knee.rotation, 2,
+				{ z: -Math.PI/6 }
+			),
+			2
+		);
+
+		timeline.insert(
+			TweenMax.to(this.ankle.rotation, 1,
+				{ z: Math.PI/12 }
+			),
+			2
+		);
+
+		timeline.append('spring');
+
+		timeline.insert(
+			TweenMax.to(this.ankle.rotation, 1,
+				{ z: -Math.PI/12 }
+			),
+			4
+		);
+
+		timeline.insert(
+			TweenMax.to(this.hipPivot.rotation, 2,
+				{ z: -Math.PI/12 }
+			),
+			4 // use array of label: time
+		);
+		timeline.insert(
+			TweenMax.to(this.hipPivot.position, 2,
+				{ y: this.hipPivot.position.y + 10 }
+			),
+			4 // use array of label: time
+		);
+
+		timeline.append('swing');
+
+		timeline.insert(
+			TweenMax.to(this.hipPivot.rotation, 2,
+				{ z: Math.PI/6 }
+			),
+			6 // use array of label: time
+		);
+
+		timeline.insert(
+			TweenMax.to(this.knee.rotation, 0.5,
+				{ z: -Math.PI/4 }
+			),
+			6
+		);
+		timeline.insert(
+			TweenMax.to(this.knee.rotation, 1,
+				{ z: 0 }
+			),
+			6.5
+		);
+
+		timeline.insert(
+			TweenMax.to(this.ankle.rotation, 1,
+				{ z: Math.PI/6 }
+			),
+			6.5
+		);
+
+		// timeline.seek('start');
+		// timeline.seek('strike');
+		// timeline.seek('weight');
+		// timeline.seek('spring');
+		// timeline.seek('swing');
 	}
 
 };
