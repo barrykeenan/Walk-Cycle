@@ -24,9 +24,13 @@ Walk.person = {
 		
 		this.pelvis.position.y = 435;
 		
-		this.leftLeg = Walk.leg.initialize(this.materials, this.scale);
+		this.rightLeg = Object.create(Walk.leg).initialize(this.materials, this.scale);
+		this.rightLeg.rootObject().position.z = this.scale * 0.4;
+		this.pelvis.add(this.rightLeg.rootObject());
 
-		this.pelvis.add(this.leftLeg.rootObject())
+		this.leftLeg = Object.create(Walk.leg).initialize(this.materials, this.scale, 'left', 1);
+		this.leftLeg.rootObject().position.z = -this.scale * 0.4;
+		this.pelvis.add(this.leftLeg.rootObject());
 
 		return this;
 	},

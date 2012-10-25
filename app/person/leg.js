@@ -12,18 +12,21 @@ Walk.leg = {
 	},
 
 	scale: 1,
+	type: 'right',
 
-	hipPivot: new THREE.Object3D(),
+	hipPivot: null,
 	thigh: null,
 	knee: null,
 	calf: null,
 	ankle: null,
 	foot: null,
 
-	initialize: function(materials, scale){
+	initialize: function(materials, scale, type){
 		this.materials = materials || this.materials;
 		this.scale = scale || this.scale;
+		this.type = type || this.type;
 
+		this.hipPivot = new THREE.Object3D();
 		this.hipPivot.add(this.leg());
 
 		return this;
@@ -81,7 +84,6 @@ Walk.leg = {
 	 		this.defaultMaterial()
 	 	);
         this.ankle.position.y = -this.scale * 0.5;
-        this.ankle.rotation.z = Math.PI/6;
         this.calf.add(this.ankle);
 
         //
@@ -98,9 +100,7 @@ Walk.leg = {
         this.foot.position.y = -this.scale * 0.1;
         this.foot.position.x = this.scale * 0.15;
         this.ankle.add(this.foot);
-
-        this.ankle.rotation.y = -Math.PI/12;
-
+        
   		return this.thigh;
 
 	},
