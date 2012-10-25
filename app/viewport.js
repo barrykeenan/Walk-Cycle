@@ -43,7 +43,7 @@ Walk.viewport = {
 	 	// start animation loop
 	 	TweenMax.ticker.addEventListener("tick", this.animate.bind(this));
 
-		this.world.startTimeline();
+		// this.world.startTimeline();
 
 	 	return this;
 	},
@@ -85,6 +85,8 @@ Walk.viewport = {
 		this.controls.staticMoving = true;
 		this.controls.dynamicDampingFactor = 0.3;
 
+		this.controls.target = new THREE.Vector3(0, 100, 0);
+
 		// set scope to this
 		// this.controls.addEventListener( 'change', this.render.bind(this) );
     },
@@ -117,15 +119,15 @@ Walk.viewport = {
 	addCamera: function() {
 		// set some camera attributes
 		var VIEW_ANGLE = 50,
-			// ASPECT = window.innerWidth / window.innerHeight,
-			ASPECT = 1,
+			ASPECT = window.innerWidth / window.innerHeight,
 			NEAR = 1,
 			FAR = 5000;
 		this.camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR );
 
     	// the camera starts at 0,0,0 so pull it back
 		this.camera.position.set( 300, 250, 800 );
-		this.camera.lookAt( this.scene.position );
+		// this.camera.position.set( 0, 150, 800 );	
+
 		this.scene.add( this.camera );
 	},
 
