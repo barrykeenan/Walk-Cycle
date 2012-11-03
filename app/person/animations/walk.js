@@ -13,12 +13,50 @@ Walk.person.animations.walk = {
 		// timeline.insert('weight', 0.7);
 		// timeline.insert('swing', 2);
 
-		// this.walkTorso(person.torsoPivot);
+		var leftArmTimeline = this.swingArm(person.leftArm);
+		var rightArmTimeline = this.swingArm(person.rightArm, leftArmTimeline.duration()/2);
+
+		this.walkTorso(person.torsoPivot);
 		this.walkPelvis(person);
 
 		var rightLegTimeline = this.walkLeg(person.rightLeg);
 		var leftLegTimeline = this.walkLeg(person.leftLeg, rightLegTimeline.duration()/2);
 	},
+
+	swingArm: function(arm, seek) {
+		seek = seek || 0;
+
+		// Setup a timeline object
+		var timeline = new TimelineMax({
+			repeat: -1
+		});
+		timeline.seek(seek);
+
+		this.shoulderTweens(timeline, arm);
+		// this.kneeTweens(timeline, leg);
+		// this.ankleTweens(timeline, leg);
+
+		return timeline;
+	},
+
+	shoulderTweens: function(timeline, arm){
+
+		// swing 
+		timeline.insert(
+			TweenMax.fromTo(arm.shoulder.rotation, 2,
+				{ z: Math.PI/6 },
+				{ z: -Math.PI/6 }
+			)
+		);
+		timeline.insert(
+			TweenMax.to(arm.shoulder.rotation, 1.8,
+				{ z: Math.PI/6 }
+			),
+			2 // use array of label: time
+		);
+		
+	},
+
 
 	walkTorso: function(torso) {
 		// Setup a timeline object
@@ -27,27 +65,42 @@ Walk.person.animations.walk = {
 			repeatDelay: 0.1,
 		});
 
+
+		// swing
+
 		timeline.insert(
-			TweenMax.to(torso.rotation, 0.1,
-				{ x: -Math.PI/48, ease: Linear.easeNone }
+			TweenMax.fromTo(torso.rotation, 1.8,
+				{ y: Math.PI/18 },
+				{ y: -Math.PI/18 }
+			)
+		);
+		timeline.insert(
+			TweenMax.to(torso.rotation, 1.8,
+				{ y: Math.PI/18 }
 			),
-			0.9
+			1.9 // use array of label: time
 		);
 
+		// weight
+
+		timeline.insert(
+			TweenMax.to(torso.rotation, 0.2,
+				{ x: Math.PI/96, ease: Linear.easeNone }
+			),
+			0.8
+		);
 		timeline.insert(
 			TweenMax.to(torso.rotation, 0.3,
 				{ x: 0, ease: Linear.easeNone }
 			),
 			1.5
 		);
-
 		timeline.insert(
-			TweenMax.to(torso.rotation, 0.1,
-				{ x: Math.PI/48, ease: Linear.easeNone }
+			TweenMax.to(torso.rotation, 0.2,
+				{ x: -Math.PI/96, ease: Linear.easeNone }
 			),
-			2.8
+			2.7
 		);
-
 		timeline.insert(
 			TweenMax.to(torso.rotation, 0.3,
 				{ x: 0, ease: Linear.easeNone }
@@ -65,10 +118,10 @@ Walk.person.animations.walk = {
 		});
 
 		timeline.insert(
-			TweenMax.to(person.pelvis.rotation, 0.1,
-				{ x: Math.PI/24, ease: Linear.easeNone }
+			TweenMax.to(person.pelvis.rotation, 0.2,
+				{ x: Math.PI/48, ease: Linear.easeNone }
 			),
-			0.9
+			0.8
 		);
 
 		timeline.insert(
@@ -79,10 +132,10 @@ Walk.person.animations.walk = {
 		);
 
 		timeline.insert(
-			TweenMax.to(person.pelvis.rotation, 0.1,
-				{ x: -Math.PI/24, ease: Linear.easeNone }
+			TweenMax.to(person.pelvis.rotation, 0.2,
+				{ x: -Math.PI/48, ease: Linear.easeNone }
 			),
-			2.8
+			2.7
 		);
 
 		timeline.insert(
@@ -131,7 +184,7 @@ Walk.person.animations.walk = {
 
 		timeline.insert(
 			TweenMax.to(leg.hipPivot.position, 0.1,
-				{ y: leg.hipPivot.position.y - 10 }
+				{ y: leg.hipPivot.position.y - (leg.scale * 0.05) }
 			),
 			0.9 // use array of label: time
 		);

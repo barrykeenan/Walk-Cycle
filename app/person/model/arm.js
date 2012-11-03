@@ -36,13 +36,14 @@ Walk.person.model.arm = {
 	},
 
 	buildArm: function(){
+		var side = (this.type == 'right')? 1 : -1;
 
 		var shoulderWidth = this.scale * 0.23;
 		this.shoulder = new THREE.Mesh(
 	 		new THREE.SphereGeometry(shoulderWidth),
 	 		this.defaultMaterial()
 	 	);
-		this.shoulder.rotation.x = -Math.PI/12;
+		this.shoulder.rotation.x = -Math.PI/16 * side;
 
 		var radiusTop = this.scale * 0.2,
 			radiusBottom = this.scale * 0.15,
@@ -56,6 +57,8 @@ Walk.person.model.arm = {
 	 		this.defaultMaterial()
 	 	);
        	this.upperArm.position.y = -this.scale * 0.25;
+		this.upperArm.rotation.x = Math.PI/24 * side;
+
         this.shoulder.add(this.upperArm);
 
 		//
@@ -68,7 +71,7 @@ Walk.person.model.arm = {
         this.elbow.position.y = -this.scale * 0.3;
         this.elbow.position.x = -this.scale * 0.01; // shunt elbow back a little
 
-		this.elbow.rotation.x = Math.PI/24;
+		this.elbow.rotation.x = Math.PI/24 * side;
 
         this.upperArm.add(this.elbow);
 
@@ -110,7 +113,7 @@ Walk.person.model.arm = {
 
         this.hand.position.y = -this.scale * 0.3;
 
-		this.hand.rotation.x = Math.PI/2;
+		this.hand.rotation.x = Math.PI/2 * side;
 		this.hand.rotation.y = Math.PI/2;
 
         this.wrist.add(this.hand);

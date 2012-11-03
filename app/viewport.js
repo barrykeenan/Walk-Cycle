@@ -125,8 +125,13 @@ Walk.viewport = {
 		this.camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR );
 
     	// the camera starts at 0,0,0 so pull it back
+		// default
 		this.camera.position.set( 300, 250, 800 );
+
 		// this.camera.position.set( 0, 150, 800 );	
+
+		// straight down
+		// this.camera.position.set( 0, 800, 0 );
 
 		this.scene.add( this.camera );
 	},

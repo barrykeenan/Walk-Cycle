@@ -24,9 +24,11 @@ Walk.person.model.person = {
 		this.materials = materials || this.materials;
 		this.scale = scale || this.scale;
 		
-		this.rightArm = this.buildArm('right');
 
 		this.buildTorso();
+		this.leftArm = this.buildArm('left');
+		this.rightArm = this.buildArm('right');
+
 		this.buildHead();
 
 		this.centre.position.y = this.scale * 2.175;
@@ -36,7 +38,7 @@ Walk.person.model.person = {
 		this.rightLeg.rootObject().position.z = this.scale * 0.3;
 		this.centre.add(this.rightLeg.rootObject());
 
-		this.leftLeg = Object.create(Walk.person.model.leg).initialize(this.materials, this.scale, 'left', 1);
+		this.leftLeg = Object.create(Walk.person.model.leg).initialize(this.materials, this.scale, 'left');
 		this.leftLeg.rootObject().position.z = -this.scale * 0.3;
 		this.centre.add(this.leftLeg.rootObject());
 
@@ -44,13 +46,16 @@ Walk.person.model.person = {
 	},
 
 	buildArm: function(type) {
-		console.log(Walk);
-		var arm = Object.create(Walk.person.model.arm).initialize(this.materials, this.scale);
-		arm.rootObject().position.x = this.scale * 0.28;
-		arm.rootObject().position.y = this.scale * 1.14; // up
-		arm.rootObject().position.z = this.scale * 0.5;
+		var arm = Object.create(Walk.person.model.arm).initialize(this.materials, this.scale, type);
+		arm.rootObject().scale.z = 0.5; // reset scale
 
-		this.centre.add(arm.rootObject());
+		arm.rootObject().position.y = this.scale * 0.38; // up
+
+		var side = (type == 'right')? 1 : -1;
+
+		arm.rootObject().position.z = this.scale * 0.26 * side;
+
+		this.torso.add(arm.rootObject());
 
 		return arm;
 	},
@@ -132,6 +137,8 @@ Walk.person.model.person = {
         this.neck.scale.z = 0.5;
         this.neck.position.y = 65;
 	    this.torso.add(this.neck);
+
+	    return this.torso;
 	},
 
 	defaultMaterial: function() {
