@@ -40,7 +40,7 @@ Walk.person.model.leg = {
 		var hipWidth = this.scale * 0.25;
 		this.hipPivot = new THREE.Mesh(
 	 		new THREE.SphereGeometry(hipWidth),
-	 		this.defaultMaterial()
+	 		this.materials.pants || this.defaultMaterial()
 	 	);
         // this.knee.position.y = -this.scale * 0.5;
         // this.knee.position.x = this.scale * 0.01; // shunt knee forward a little
@@ -55,7 +55,7 @@ Walk.person.model.leg = {
 
 	 	this.thigh = new THREE.Mesh(
 	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
-	 		this.defaultMaterial()
+	 		this.materials.pants || this.defaultMaterial()
 	 	);
        	this.thigh.position.y = -this.scale * 0.5;
         this.hipPivot.add(this.thigh);
@@ -65,7 +65,7 @@ Walk.person.model.leg = {
 		var kneeWidth = this.scale * 0.19;
 		this.knee = new THREE.Mesh(
 	 		new THREE.SphereGeometry(kneeWidth),
-	 		this.defaultMaterial()
+	 		this.materials.pants || this.defaultMaterial()
 	 	);
         this.knee.position.y = -this.scale * 0.5;
         this.knee.position.x = this.scale * 0.01; // shunt knee forward a little
@@ -74,12 +74,12 @@ Walk.person.model.leg = {
         //
 
 		radiusTop = this.scale * 0.2,
-		radiusBottom = this.scale * 0.125,
+		radiusBottom = this.scale * 0.25,
 		height = this.scale * 0.95;
 
 		this.calf = new THREE.Mesh(
 	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
-	 		this.defaultMaterial()
+	 		this.materials.pants || this.defaultMaterial()
 	 	);
         this.calf.position.y = -this.scale * 0.5;
         this.calf.position.x = -this.scale * 0.01; // -shunt knee forward a little
@@ -103,7 +103,7 @@ Walk.person.model.leg = {
 
 		this.foot = new THREE.Mesh(
 	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
-	 		this.defaultMaterial()
+	 		this.materials.hair || this.defaultMaterial()
 	 	);
         this.foot.scale.x = 2;
         this.foot.position.y = -this.scale * 0.1;

@@ -32,6 +32,12 @@ Walk.world = {
 	addProps: function() {
 
 		var materials = {
+			skin: this.materials.skin(),
+			hair: this.materials.hair(),
+
+			tshirt: this.materials.tshirt(),
+			pants: this.materials.pants(),
+
 			default: this.materials.solid()
 		};
 

@@ -41,7 +41,7 @@ Walk.person.model.arm = {
 		var shoulderWidth = this.scale * 0.23;
 		this.shoulder = new THREE.Mesh(
 	 		new THREE.SphereGeometry(shoulderWidth),
-	 		this.defaultMaterial()
+	 		this.materials.tshirt || this.defaultMaterial()
 	 	);
 		this.shoulder.rotation.x = -Math.PI/16 * side;
 
@@ -54,19 +54,30 @@ Walk.person.model.arm = {
 
 	 	this.upperArm = new THREE.Mesh(
 	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
-	 		this.defaultMaterial()
+	 		this.materials.skin || this.defaultMaterial()
 	 	);
        	this.upperArm.position.y = -this.scale * 0.25;
 		this.upperArm.rotation.x = Math.PI/24 * side;
 
         this.shoulder.add(this.upperArm);
 
+       	radiusTop = this.scale * 0.2;
+		radiusBottom = this.scale * 0.2;
+		height = this.scale * 0.4;
+
+		this.sleave = new THREE.Mesh(
+	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
+	 		this.materials.tshirt || this.defaultMaterial()
+	 	);
+       	this.sleave.position.y = this.scale * 0.11;
+        this.upperArm.add(this.sleave);
+
 		//
 
 		var elbowWidth = this.scale * 0.16;
 		this.elbow = new THREE.Mesh(
 	 		new THREE.SphereGeometry(elbowWidth),
-	 		this.defaultMaterial()
+	 		this.materials.skin || this.defaultMaterial()
 	 	);
         this.elbow.position.y = -this.scale * 0.3;
         this.elbow.position.x = -this.scale * 0.01; // shunt elbow back a little
@@ -83,7 +94,7 @@ Walk.person.model.arm = {
 
 		this.forearm = new THREE.Mesh(
 	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
-	 		this.defaultMaterial()
+	 		this.materials.skin || this.defaultMaterial()
 	 	);
         this.forearm.position.y = -this.scale * 0.3;
         this.forearm.position.x = this.scale * 0.01; // -shunt elbow back a little
@@ -94,7 +105,7 @@ Walk.person.model.arm = {
 		var wristWidth = this.scale * 0.13;
 		this.wrist = new THREE.Mesh(
 	 		new THREE.SphereGeometry(wristWidth),
-	 		this.defaultMaterial()
+	 		this.materials.skin || this.defaultMaterial()
 	 	);
         this.wrist.position.y = -this.scale * 0.3;
         this.forearm.add(this.wrist);
@@ -107,7 +118,7 @@ Walk.person.model.arm = {
 
 		this.hand = new THREE.Mesh(
 	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
-	 		this.defaultMaterial()
+	 		this.materials.skin || this.defaultMaterial()
 	 	);
         this.hand.scale.x = 1.5;
 

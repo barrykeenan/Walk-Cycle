@@ -29,7 +29,7 @@ Walk.person.model.person = {
 		this.leftArm = this.buildArm('left');
 		this.rightArm = this.buildArm('right');
 
-		this.buildHead();
+		this.head = this.attachHead();
 
 		this.centre.position.y = this.scale * 2.175;
 		this.buildPelvis();
@@ -43,6 +43,16 @@ Walk.person.model.person = {
 		this.centre.add(this.leftLeg.rootObject());
 
 		return this;
+	},
+
+	attachHead: function() {
+		var head = Walk.person.model.head.initialize(this.materials, this.scale);
+
+		head.rootObject().position.y = this.scale * 1; // up
+
+		this.torso.add(head.rootObject());
+
+		return head;
 	},
 
 	buildArm: function(type) {
@@ -60,34 +70,22 @@ Walk.person.model.person = {
 		return arm;
 	},
 
-	buildHead: function() {
-
-        var headWidth = this.scale * 0.4;
-		this.head = new THREE.Mesh(
-	 		new THREE.SphereGeometry(headWidth),
-	 		this.defaultMaterial()
-	 	);
-        this.head.position.y = 60;
-        this.head.scale.z = 0.5;
-
-        // this.shoulder.add(this.head);
-	},
-
 	buildPelvis: function() {
-		var radiusTop = this.scale * 0.25,
+		var radiusTop = this.scale * 0.24,
 			radiusBottom = this.scale * 0.28,
-			height = this.scale * 0.6,
+			height = this.scale * 0.4,
 			radiusSegments = 10,
 			heightSegments = 2,
 			openEnded = false;
 
 	 	this.pelvis = new THREE.Mesh(
 	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
-	 		this.defaultMaterial()
+	 		this.materials.pants || this.defaultMaterial()
 	 	);
         this.pelvis.scale.z = 2;
         this.pelvis.rotation.z = -Math.PI/8;
 		this.pelvis.position.y = 20;
+		this.pelvis.position.x = 5;
 
         this.centre.add(this.pelvis);
 
@@ -97,7 +95,7 @@ Walk.person.model.person = {
 	buildTorso: function() {
 		this.torsoPivot = new THREE.Object3D();
 		this.torsoPivot.position.y = 80;
-		this.torsoPivot.position.x = 19;
+		this.torsoPivot.position.x = 24;
         this.torsoPivot.rotation.z = -Math.PI/12;
         this.centre.add(this.torsoPivot);
 
@@ -110,7 +108,7 @@ Walk.person.model.person = {
 
 	 	this.torso = new THREE.Mesh(
 	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
-	 		this.defaultMaterial()
+	 		this.materials.tshirt || this.defaultMaterial()
 	 	);
         this.torso.scale.z = 2;
 
@@ -120,7 +118,7 @@ Walk.person.model.person = {
         var shoulderWidth = this.scale * 0.35;
 		this.shoulder = new THREE.Mesh(
 	 		new THREE.SphereGeometry(shoulderWidth),
-	 		this.defaultMaterial()
+	 		this.materials.tshirt || this.defaultMaterial()
 	 	);
         this.shoulder.scale.y = 0.5;
         this.shoulder.position.y = 45;
@@ -132,7 +130,7 @@ Walk.person.model.person = {
 
 	 	this.neck = new THREE.Mesh(
 	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
-	 		this.defaultMaterial()
+	 		this.materials.skin || this.defaultMaterial()
 	 	);
         this.neck.scale.z = 0.5;
         this.neck.position.y = 65;
