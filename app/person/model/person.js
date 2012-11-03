@@ -48,7 +48,7 @@ Walk.person.model.person = {
 	attachHead: function() {
 		var head = Walk.person.model.head.initialize(this.materials, this.scale);
 
-		head.rootObject().position.y = this.scale * 1; // up
+		head.rootObject().position.y = this.scale * 0.96; // up
 
 		this.torso.add(head.rootObject());
 
