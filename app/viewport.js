@@ -51,7 +51,6 @@ Walk.viewport = {
 	initContainer: function() {
 		this.el = document.createElement( 'div' );
 		this.el.style.position = 'absolute';
-		this.el.style.marginBottom = '10px';
 		this.el.style.backgroundColor = '#aaa';
 
 		this.el.style.userSelect = 'none';
@@ -64,6 +63,7 @@ Walk.viewport = {
 	initRenderComponent: function() {
 		this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: false, clearColor: 0xaaaaaa, clearAlpha: 1 } );
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
+		// this.renderer.setSize( 800, 600 );
 
 		this.renderer.autoClear = false;
 		this.renderer.autoUpdateScene = false;

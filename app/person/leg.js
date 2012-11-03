@@ -26,8 +26,7 @@ Walk.leg = {
 		this.scale = scale || this.scale;
 		this.type = type || this.type;
 
-		this.hipPivot = new THREE.Object3D();
-		this.hipPivot.add(this.leg());
+		this.buildLeg();
 
 		return this;
 	},
@@ -36,7 +35,16 @@ Walk.leg = {
 		return this.materials.default;
 	},
 
-	leg: function(){
+	buildLeg: function(){
+
+		var hipWidth = this.scale * 0.25;
+		this.hipPivot = new THREE.Mesh(
+	 		new THREE.SphereGeometry(hipWidth),
+	 		this.defaultMaterial()
+	 	);
+        // this.knee.position.y = -this.scale * 0.5;
+        // this.knee.position.x = this.scale * 0.01; // shunt knee forward a little
+        // this.thigh.add(this.knee);
 
 		var radiusTop = this.scale * 0.25,
 			radiusBottom = this.scale * 0.2,
@@ -50,6 +58,7 @@ Walk.leg = {
 	 		this.defaultMaterial()
 	 	);
        	this.thigh.position.y = -this.scale * 0.5;
+        this.hipPivot.add(this.thigh);
 
 		//
 
@@ -100,9 +109,6 @@ Walk.leg = {
         this.foot.position.y = -this.scale * 0.1;
         this.foot.position.x = this.scale * 0.15;
         this.ankle.add(this.foot);
-        
-  		return this.thigh;
-
 	},
 
 	rootObject: function(){
