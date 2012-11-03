@@ -17,10 +17,35 @@ Walk.person.animations.walk = {
 		var rightArmTimeline = this.swingArm(person.rightArm, leftArmTimeline.duration()/2);
 
 		this.walkTorso(person.torsoPivot);
+		this.twistHead(person.head.rootObject());
+
 		this.walkPelvis(person);
 
 		var rightLegTimeline = this.walkLeg(person.rightLeg);
 		var leftLegTimeline = this.walkLeg(person.leftLeg, rightLegTimeline.duration()/2);
+
+		this.leap(person.centre);
+	},
+
+	twistHead: function(head) {
+
+		var timeline = new TimelineMax({
+			repeat: -1,
+			repeatDelay: 0.1,
+		});
+
+		timeline.insert(
+			TweenMax.fromTo(head.rotation, 1.8,
+				{ y: -Math.PI/48 },
+				{ y: Math.PI/48 }
+			)
+		);
+		timeline.insert(
+			TweenMax.to(head.rotation, 1.8,
+				{ y: -Math.PI/48 }
+			),
+			1.9 // use array of label: time
+		);
 	},
 
 	swingArm: function(arm, seek) {
@@ -33,7 +58,7 @@ Walk.person.animations.walk = {
 		timeline.seek(seek);
 
 		this.shoulderTweens(timeline, arm);
-		// this.kneeTweens(timeline, leg);
+		this.elbowTweens(timeline, arm);
 		// this.ankleTweens(timeline, leg);
 
 		return timeline;
@@ -44,17 +69,35 @@ Walk.person.animations.walk = {
 		// swing 
 		timeline.insert(
 			TweenMax.fromTo(arm.shoulder.rotation, 2,
-				{ z: Math.PI/6 },
-				{ z: -Math.PI/6 }
+				{ z: -Math.PI/5 },
+				{ z: Math.PI/3 }
 			)
 		);
 		timeline.insert(
 			TweenMax.to(arm.shoulder.rotation, 1.8,
-				{ z: Math.PI/6 }
+				{ z: -Math.PI/5 }
 			),
 			2 // use array of label: time
 		);
 		
+	},
+
+	elbowTweens: function(timeline, arm) {
+
+		timeline.insert(
+			TweenMax.fromTo(arm.elbow.rotation, 2,
+				{ z: Math.PI/1.5 },
+				{ z: Math.PI/2 }
+			)
+		);
+
+		timeline.insert(
+			TweenMax.to(arm.elbow.rotation, 1.8,
+				{ z: Math.PI/1.5 }
+			),
+			2
+		);
+
 	},
 
 
@@ -254,6 +297,44 @@ Walk.person.animations.walk = {
 				{ z: Math.PI/6, y: Math.PI/12 * direction }
 			),
 			2.6
+		);
+
+	},
+
+	leap: function(centre) {
+
+		var timeline = new TimelineMax({
+			repeat: -1,
+			repeatDelay: 0.1,
+		});
+
+		// weight
+
+		var currentVertical = centre.position.y;
+
+		timeline.insert(
+			TweenMax.to(centre.position, 0.3,
+				{ y: currentVertical + 5, ease: Linear.easeNone }
+			),
+			1
+		);
+		timeline.insert(
+			TweenMax.to(centre.position, 0.5,
+				{ y: currentVertical, ease: Linear.easeNone }
+			),
+			1.4
+		);
+		timeline.insert(
+			TweenMax.to(centre.position, 0.3,
+				{ y: currentVertical + 5, ease: Linear.easeNone }
+			),
+			2.9
+		);
+		timeline.insert(
+			TweenMax.to(centre.position, 0.5,
+				{ y: currentVertical, ease: Linear.easeNone }
+			),
+			3.3
 		);
 
 	}

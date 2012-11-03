@@ -57,6 +57,23 @@ Walk.person.model.head = {
 
         this.scull.add(this.jaw);
 
+
+        radiusTop = this.scale * 0.03;
+		radiusBottom = this.scale * 0.06;
+		height = this.scale * 0.15;
+
+	 	this.nose = new THREE.Mesh(
+	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
+	 		this.materials.skin || this.defaultMaterial()
+	 	);
+
+		this.nose.position.y = 3;
+		this.nose.position.x = 32;
+
+        this.nose.rotation.z = Math.PI/12;
+
+        this.scull.add(this.nose);
+
 		return this;
 	},
 
