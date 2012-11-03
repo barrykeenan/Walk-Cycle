@@ -13,7 +13,7 @@ Walk.person.animations.walk = {
 		// timeline.insert('weight', 0.7);
 		// timeline.insert('swing', 2);
 
-		this.walkTorso(person.torsoPivot);
+		// this.walkTorso(person.torsoPivot);
 		this.walkPelvis(person);
 
 		var rightLegTimeline = this.walkLeg(person.rightLeg);

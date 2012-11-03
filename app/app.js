@@ -35,7 +35,7 @@ Walk.world = {
 			default: this.materials.solid()
 		};
 
-		this.person = Walk.person.initialize(materials, 100);
+		this.person = Walk.person.model.person.initialize(materials, 100);
 
 		this.scene.add(this.person.rootObject());
     },
@@ -47,7 +47,7 @@ Walk.world = {
 		var walkAnimation = Walk.person.animations.walk;
 		walkAnimation.animate(this.person);
 	}
-	
+
 };
 
 var world = Walk.world.initialize(Walk.materialFactory);

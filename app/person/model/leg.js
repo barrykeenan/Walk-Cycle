@@ -3,7 +3,7 @@
  * 
  * @type {Walk.leg}
  */
-Walk.leg = {
+Walk.person.model.leg = {
 
 	materials: {
 		default: new THREE.MeshLambertMaterial({

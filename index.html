@@ -16,12 +16,19 @@
 
 <script type="text/javascript">
 	// global namespace for our app
-	window.Walk = {};
+	window.Walk = {
+		person: {
+			model: {},
+			animations: {}
+		}
+	};
 </script>
 <script src="app/viewport.js"></script>
 <script src="app/material_factory.js"></script>
-<script src="app/person/leg.js"></script>
-<script src="app/person/person.js"></script>
+
+<script src="app/person/model/arm.js"></script>
+<script src="app/person/model/leg.js"></script>
+<script src="app/person/model/person.js"></script>
 <script src="app/person/animations/walk.js"></script>
 
 <script src="app/app.js"></script>

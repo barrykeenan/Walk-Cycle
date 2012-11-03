@@ -3,7 +3,7 @@
  * 
  * @type {Walk.person}
  */
-Walk.person = {
+Walk.person.model.person = {
 
 	materials: {
 		default: new THREE.MeshLambertMaterial({
@@ -24,21 +24,35 @@ Walk.person = {
 		this.materials = materials || this.materials;
 		this.scale = scale || this.scale;
 		
+		this.rightArm = this.buildArm('right');
+
 		this.buildTorso();
 		this.buildHead();
 
 		this.centre.position.y = this.scale * 2.175;
 		this.buildPelvis();
 		
-		this.rightLeg = Object.create(Walk.leg).initialize(this.materials, this.scale);
-		this.rightLeg.rootObject().position.z = this.scale * 0.4;
+		this.rightLeg = Object.create(Walk.person.model.leg).initialize(this.materials, this.scale);
+		this.rightLeg.rootObject().position.z = this.scale * 0.3;
 		this.centre.add(this.rightLeg.rootObject());
 
-		this.leftLeg = Object.create(Walk.leg).initialize(this.materials, this.scale, 'left', 1);
-		this.leftLeg.rootObject().position.z = -this.scale * 0.4;
+		this.leftLeg = Object.create(Walk.person.model.leg).initialize(this.materials, this.scale, 'left', 1);
+		this.leftLeg.rootObject().position.z = -this.scale * 0.3;
 		this.centre.add(this.leftLeg.rootObject());
 
 		return this;
+	},
+
+	buildArm: function(type) {
+		console.log(Walk);
+		var arm = Object.create(Walk.person.model.arm).initialize(this.materials, this.scale);
+		arm.rootObject().position.x = this.scale * 0.28;
+		arm.rootObject().position.y = this.scale * 1.14; // up
+		arm.rootObject().position.z = this.scale * 0.5;
+
+		this.centre.add(arm.rootObject());
+
+		return arm;
 	},
 
 	buildHead: function() {
@@ -51,12 +65,12 @@ Walk.person = {
         this.head.position.y = 60;
         this.head.scale.z = 0.5;
 
-        this.shoulder.add(this.head);
+        // this.shoulder.add(this.head);
 	},
 
 	buildPelvis: function() {
-		var radiusTop = this.scale * 0.3,
-			radiusBottom = this.scale * 0.25,
+		var radiusTop = this.scale * 0.25,
+			radiusBottom = this.scale * 0.28,
 			height = this.scale * 0.6,
 			radiusSegments = 10,
 			heightSegments = 2,
@@ -83,7 +97,7 @@ Walk.person = {
         this.centre.add(this.torsoPivot);
 
 		var radiusTop = this.scale * 0.35,
-			radiusBottom = this.scale * 0.3,
+			radiusBottom = this.scale * 0.26,
 			height = this.scale * 0.9,
 			radiusSegments = 10,
 			heightSegments = 2,
@@ -103,8 +117,21 @@ Walk.person = {
 	 		new THREE.SphereGeometry(shoulderWidth),
 	 		this.defaultMaterial()
 	 	);
-        this.shoulder.position.y = 40;
+        this.shoulder.scale.y = 0.5;
+        this.shoulder.position.y = 45;
         this.torso.add(this.shoulder);
+
+    	radiusTop = this.scale * 0.15,
+		radiusBottom = this.scale * 0.2,
+		height = this.scale * 0.1;
+
+	 	this.neck = new THREE.Mesh(
+	 		new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments),
+	 		this.defaultMaterial()
+	 	);
+        this.neck.scale.z = 0.5;
+        this.neck.position.y = 65;
+	    this.torso.add(this.neck);
 	},
 
 	defaultMaterial: function() {
