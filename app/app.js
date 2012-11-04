@@ -45,9 +45,9 @@ Walk.world = {
 
 		this.scene.add(this.person.rootObject());
 
-		var circle = this.circleShape(40);
+		this.circle = this.circleShape(300);
 
-		this.createLine(circle, 0x00ff11, 0, 0, 0, Math.PI/2, 0, 0, 5 );
+		this.createLine(this.circle, 0x00ff11, 0, 0, 0, Math.PI/2, 0, 0, 1 );
     },
 
     circleShape: function(circleRadius) {
@@ -78,6 +78,42 @@ Walk.world = {
 	startTimeline: function() {
 		var walkAnimation = Walk.person.animations.walk;
 		walkAnimation.animate(this.person);
+
+		// mesh.position = spline.getPoint(t);
+
+		// console.log('point:', this.circle.getPoint(0.1).x);
+
+		var timeline = new TimelineMax({
+			repeat: -1
+		});
+
+		var pos = {
+			x: 0,
+			y: 0,
+			z: 0
+		};
+		timeline.insert(
+			TweenMax.to(pos, 5,
+				{ x: 100, onUpdate: function(app, tween){
+					app.person.centre.position.x = app.circle.getPoint(tween.ratio).x;
+				}, onUpdateParams:[this, "{self}"], ease: Linear.easeNone }
+			)
+		);
+		timeline.insert(
+			TweenMax.to(pos, 5,
+				{ y: 100, onUpdate: function(app, tween){
+					app.person.centre.position.z = app.circle.getPoint(tween.ratio).y;
+				}, onUpdateParams:[this, "{self}"],ease: Linear.easeNone }
+			)
+		);
+	},
+
+	debug: function(app, tween){
+		// console.log(tween.ratio);
+
+		console.log('point:', app.circle.getPoint(tween.ratio).x);
+
+		app.person.centre.position.x = app.circle.getPoint(tween.ratio).x;
 	}
 
 };
