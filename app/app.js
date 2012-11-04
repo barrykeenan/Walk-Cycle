@@ -44,7 +44,33 @@ Walk.world = {
 		this.person = Walk.person.model.person.initialize(materials, 100);
 
 		this.scene.add(this.person.rootObject());
+
+		var circle = this.circleShape(40);
+
+		this.createLine(circle, 0x00ff11, 0, 0, 0, Math.PI/2, 0, 0, 5 );
     },
+
+    circleShape: function(circleRadius) {
+
+		var circleShape = new THREE.Shape();
+		circleShape.moveTo( 0, circleRadius );
+		circleShape.quadraticCurveTo( circleRadius, circleRadius, circleRadius, 0 );
+		circleShape.quadraticCurveTo( circleRadius, -circleRadius, 0, -circleRadius );
+		circleShape.quadraticCurveTo( -circleRadius, -circleRadius, -circleRadius, 0 );
+		circleShape.quadraticCurveTo( -circleRadius, circleRadius, 0, circleRadius );
+
+		return circleShape;
+    },
+
+	createLine: function(shape, color, x, y, z, rx, ry, rz, s) {
+		var points = shape.createPointsGeometry();
+
+		var line = new THREE.Line( points, new THREE.LineBasicMaterial( { color: color, linewidth: 2 } ) );
+		line.position.set( x, y, z + 25 );
+		line.rotation.set( rx, ry, rz );
+		line.scale.set( s, s, s );
+		this.scene.add( line );
+	},
 
     /**
 	 * Called from Viewport
