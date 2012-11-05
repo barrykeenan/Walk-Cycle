@@ -45,15 +45,16 @@ Walk.world = {
 
 		this.scene.add(this.person.rootObject());
 
-		this.circle = this.circleShape(300);
+		this.eight = this.figureEight(300);
 
-		this.createLine(this.circle, 0x00ff11, 0, 0, 0, Math.PI/2, 0, 0, 1 );
+		this.createLine(this.eight, 0x00ff11, 0, 0, 0, Math.PI/2, 0, 0, 1 );
     },
 
     circleShape: function(circleRadius) {
-
 		var circleShape = new THREE.Shape();
 		circleShape.moveTo( 0, circleRadius );
+
+		// handle_x, handle_y, endpoint_x, endpoint_y
 		circleShape.quadraticCurveTo( circleRadius, circleRadius, circleRadius, 0 );
 		circleShape.quadraticCurveTo( circleRadius, -circleRadius, 0, -circleRadius );
 		circleShape.quadraticCurveTo( -circleRadius, -circleRadius, -circleRadius, 0 );
@@ -62,11 +63,31 @@ Walk.world = {
 		return circleShape;
     },
 
+    figureEight: function(radius) {
+		var eight = new THREE.Shape();
+		eight.moveTo( 0, radius*2 );
+		
+		// handle_x, handle_y, endpoint_x, endpoint_y
+		eight.quadraticCurveTo( radius, radius*2, radius, radius );
+		eight.quadraticCurveTo( radius, 0, 0, 0 );
+
+		eight.quadraticCurveTo( -radius, 0, -radius, -radius );
+		eight.quadraticCurveTo( -radius, -radius*2, 0, -radius*2 );
+
+		eight.quadraticCurveTo( radius, -radius*2, radius, -radius );
+		eight.quadraticCurveTo( radius, 0, 0, 0 );
+
+		eight.quadraticCurveTo( -radius, 0, -radius, radius );
+		eight.quadraticCurveTo( -radius, radius*2, 0, radius*2 );
+
+		return eight;
+    },
+
 	createLine: function(shape, color, x, y, z, rx, ry, rz, s) {
 		var points = shape.createPointsGeometry();
 
 		var line = new THREE.Line( points, new THREE.LineBasicMaterial( { color: color, linewidth: 2 } ) );
-		line.position.set( x, y, z + 25 );
+		line.position.set( x, y, z );
 		line.rotation.set( rx, ry, rz );
 		line.scale.set( s, s, s );
 		this.scene.add( line );
@@ -79,8 +100,6 @@ Walk.world = {
 		var walkAnimation = Walk.person.animations.walk;
 		walkAnimation.animate(this.person);
 
-		// mesh.position = spline.getPoint(t);
-
 		// console.log('point:', this.circle.getPoint(0.1).x);
 
 		var timeline = new TimelineMax({
@@ -92,17 +111,19 @@ Walk.world = {
 			y: 0,
 			z: 0
 		};
+
+		// TODO: modify multiple properties at once??
 		timeline.insert(
-			TweenMax.to(pos, 5,
+			TweenMax.to(pos, 15,
 				{ x: 100, onUpdate: function(app, tween){
-					app.person.centre.position.x = app.circle.getPoint(tween.ratio).x;
+					app.person.centre.position.x = app.eight.getPoint(tween.ratio).x;
 				}, onUpdateParams:[this, "{self}"], ease: Linear.easeNone }
 			)
 		);
 		timeline.insert(
-			TweenMax.to(pos, 5,
+			TweenMax.to(pos, 15,
 				{ y: 100, onUpdate: function(app, tween){
-					app.person.centre.position.z = app.circle.getPoint(tween.ratio).y;
+					app.person.centre.position.z = app.eight.getPoint(tween.ratio).y;
 				}, onUpdateParams:[this, "{self}"],ease: Linear.easeNone }
 			)
 		);
