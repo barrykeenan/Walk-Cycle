@@ -45,7 +45,7 @@ Walk.world = {
 
 		this.scene.add(this.person.rootObject());
 
-		this.eight = this.figureEight(300);
+		this.eight = this.figureEight(400);
 
 		this.createLine(this.eight, 0x00ff11, 0, 0, 0, Math.PI/2, 0, 0, 1 );
     },
@@ -100,41 +100,30 @@ Walk.world = {
 		var walkAnimation = Walk.person.animations.walk;
 		walkAnimation.animate(this.person);
 
-		// console.log('point:', this.circle.getPoint(0.1).x);
+		this.moveActorAlongPath();
+	},
 
+	moveActorAlongPath: function() {
 		var timeline = new TimelineMax({
 			repeat: -1
 		});
 
-		var pos = {
-			x: 0,
-			y: 0,
-			z: 0
-		};
-
-		// TODO: modify multiple properties at once??
 		timeline.insert(
-			TweenMax.to(pos, 15,
-				{ x: 100, onUpdate: function(app, tween){
+			TweenMax.to(this.person.centre, 20,
+				{ onUpdate: function(app, tween){
 					app.person.centre.position.x = app.eight.getPoint(tween.ratio).x;
+					app.person.centre.position.z = app.eight.getPoint(tween.ratio).y;
+
+					// http://www.planetclegg.com/projects/WarpingTextToSplines.html
+					// We can rotate the vector 90 degrees by using linear algebra,
+					// or by simply swapping the terms and negating one of them. 
+					var tangent = app.eight.getTangent(tween.ratio);
+					var angle = Math.atan2(-tangent.y, tangent.x);
+					app.person.centre.rotation.y = angle;
+
 				}, onUpdateParams:[this, "{self}"], ease: Linear.easeNone }
 			)
 		);
-		timeline.insert(
-			TweenMax.to(pos, 15,
-				{ y: 100, onUpdate: function(app, tween){
-					app.person.centre.position.z = app.eight.getPoint(tween.ratio).y;
-				}, onUpdateParams:[this, "{self}"],ease: Linear.easeNone }
-			)
-		);
-	},
-
-	debug: function(app, tween){
-		// console.log(tween.ratio);
-
-		console.log('point:', app.circle.getPoint(tween.ratio).x);
-
-		app.person.centre.position.x = app.circle.getPoint(tween.ratio).x;
 	}
 
 };
