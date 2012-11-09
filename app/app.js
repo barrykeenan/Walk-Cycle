@@ -42,22 +42,19 @@ Walk.world = {
 		};
 
 		this.person = Walk.person.model.person.initialize(materials, 100);
-
 		this.scene.add(this.person.rootObject());
 
-		this.eight = Walk.shapes.figureEight(400);
 
-		this.createLine(this.eight, 0x00ff11, 0, 0, 0, Math.PI/2, 0, 0, 1 );
+		this.eightShape = Walk.shapes.figureEight(400);
+		var eightLine = this.createLine(this.eightShape, 0x00ff11 );
+		eightLine.rotation.x = Math.PI/2;
+		this.scene.add( eightLine );
     },
 
-	createLine: function(shape, color, x, y, z, rx, ry, rz, s) {
+	createLine: function(shape, color) {
 		var points = shape.createPointsGeometry();
 
-		var line = new THREE.Line( points, new THREE.LineBasicMaterial( { color: color, linewidth: 2 } ) );
-		line.position.set( x, y, z );
-		line.rotation.set( rx, ry, rz );
-		line.scale.set( s, s, s );
-		this.scene.add( line );
+		return new THREE.Line( points, new THREE.LineBasicMaterial( { color: color, linewidth: 2 } ) );
 	},
 
     /**
