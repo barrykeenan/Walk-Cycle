@@ -1,11 +1,16 @@
-Walk.person.animations = {};
-
 /**
  * Walk animation
+ * 
+ * @type {Walk}
  */
-Walk.person.animations.walk = {
+define([
 
-	animate: function(person) {
+], function(FigureEight, Person, Walk) {
+
+	function Walk() {};
+
+
+	Walk.prototype.animate = function(person) {
 
 		// todo: timings object
 		// timeline.append('start');
@@ -25,9 +30,9 @@ Walk.person.animations.walk = {
 		var leftLegTimeline = this.walkLeg(person.leftLeg, rightLegTimeline.duration()/2);
 
 		this.leap(person.centre);
-	},
+	};
 
-	twistHead: function(head) {
+	Walk.prototype.twistHead = function(head) {
 
 		var timeline = new TimelineMax({
 			repeat: -1,
@@ -46,9 +51,9 @@ Walk.person.animations.walk = {
 			),
 			1.9 // use array of label: time
 		);
-	},
+	};
 
-	swingArm: function(arm, seek) {
+	Walk.prototype.swingArm = function(arm, seek) {
 		seek = seek || 0;
 
 		// Setup a timeline object
@@ -62,9 +67,9 @@ Walk.person.animations.walk = {
 		// this.ankleTweens(timeline, leg);
 
 		return timeline;
-	},
+	};
 
-	shoulderTweens: function(timeline, arm){
+	Walk.prototype.shoulderTweens = function(timeline, arm){
 
 		// swing 
 		timeline.insert(
@@ -80,9 +85,9 @@ Walk.person.animations.walk = {
 			2 // use array of label: time
 		);
 		
-	},
+	};
 
-	elbowTweens: function(timeline, arm) {
+	Walk.prototype.elbowTweens = function(timeline, arm) {
 
 		timeline.insert(
 			TweenMax.fromTo(arm.elbow.rotation, 2,
@@ -98,10 +103,10 @@ Walk.person.animations.walk = {
 			2
 		);
 
-	},
+	};
 
 
-	walkTorso: function(torso) {
+	Walk.prototype.walkTorso = function(torso) {
 		// Setup a timeline object
 		var timeline = new TimelineMax({
 			repeat: -1,
@@ -151,9 +156,9 @@ Walk.person.animations.walk = {
 			3.4
 		);
 
-	},
+	};
 
-	walkPelvis: function(person) {
+	Walk.prototype.walkPelvis = function(person) {
 		// Setup a timeline object
 		var timeline = new TimelineMax({
 			repeat: -1,
@@ -188,9 +193,9 @@ Walk.person.animations.walk = {
 			3.4
 		);
 
-	},
+	};
 
-	walkLeg: function(leg, seek) {
+	Walk.prototype.walkLeg = function(leg, seek) {
 		seek = seek || 0;
 
 		// Setup a timeline object
@@ -204,9 +209,9 @@ Walk.person.animations.walk = {
 		this.ankleTweens(timeline, leg);
 
 		return timeline;
-	},
+	};
 
-	hipTweens: function(timeline, leg){
+	Walk.prototype.hipTweens = function(timeline, leg){
 
 		// swing 
 		timeline.insert(
@@ -238,9 +243,9 @@ Walk.person.animations.walk = {
 			1.5 // use array of label: time
 		);
 		
-	},
+	};
 
-	kneeTweens: function(timeline, leg) {
+	Walk.prototype.kneeTweens = function(timeline, leg) {
 		timeline.insert(
 			TweenMax.fromTo(leg.knee.rotation, 1,
 				{ z: 0 },
@@ -262,9 +267,9 @@ Walk.person.animations.walk = {
 			),
 			2.6
 		);
-	},
+	};
 
-	ankleTweens: function(timeline, leg) {
+	Walk.prototype.ankleTweens = function(timeline, leg) {
 		var direction = (leg.type == 'right')? -1 : 1;
 
 		// strike 
@@ -299,9 +304,9 @@ Walk.person.animations.walk = {
 			2.6
 		);
 
-	},
+	};
 
-	leap: function(centre) {
+	Walk.prototype.leap = function(centre) {
 
 		var timeline = new TimelineMax({
 			repeat: -1,
@@ -337,7 +342,8 @@ Walk.person.animations.walk = {
 			3.3
 		);
 
-	}
+	};
 
+	return Walk;
 
-};
+});

@@ -1,16 +1,15 @@
 /**
- * Scene with props
+ * Scene with lights, props & actors
  *
- * Requires Greensock TweenLite for animation
- * 
  * @type {World}
  */
 define([
 
 	"app/shapes/FigureEight",
-	"app/person/model/Person"
+	"app/person/model/Person",
+	"app/person/animations/Walk"
 
-], function(FigureEight, Person) {
+], function(FigureEight, Person, Walk) {
 
 	function World(materialFactory) {
 		this.materials = materialFactory;
@@ -64,7 +63,7 @@ define([
 	 * Called from Viewport
 	 */
 	World.prototype.startTimeline = function() {
-		// var walkAnimation = Walk.person.animations.walk;
+		// var walkAnimation = new Walk();
 		// walkAnimation.animate(this.person);
 	};
 
