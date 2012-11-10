@@ -66,10 +66,10 @@ define([
 		// var walkAnimation = new Walk();
 		// walkAnimation.animate(this.person);
 		
-		this.moveActorAlongPath();
+		this.moveActorAlongPath(true);
 	};
 
-	World.prototype.moveActorAlongPath = function() {
+	World.prototype.moveActorAlongPath = function(orientToPath) {
 		var timeline = new TimelineMax({
 			repeat: -1
 		});
@@ -77,8 +77,16 @@ define([
 		timeline.insert(
 			TweenMax.to(this.person.centre, 20,
 				{ onUpdate: function(app, tween){
-					app.person.centre.position.x = app.eightPath.getPoint(tween.ratio).x;
-					app.person.centre.position.z = app.eightPath.getPoint(tween.ratio).y;
+					var pathPosition = app.eightPath.getPoint(tween.ratio);
+					
+					app.person.centre.position.x = pathPosition.x;
+					app.person.centre.position.z = pathPosition.y;
+
+					if(orientToPath===true) {
+						var tangent = app.eightPath.getTangent(tween.ratio);
+						var angle = Math.atan2(-tangent.y, tangent.x);
+						app.person.centre.rotation.y = angle;
+					}
 
 				}, onUpdateParams:[this, "{self}"], ease: Linear.easeNone }
 			)
