@@ -34,8 +34,8 @@ define([
 		this.scene.add(this.person.rootObject());
 
 
-		this.eightShape = new FigureEight(400);
-		var eightLine = this.createLine(this.eightShape, 0x00ff11 );
+		this.eightPath = new FigureEight(400);
+		var eightLine = this.createLine(this.eightPath, 0x00ff11 );
 		eightLine.rotation.x = Math.PI/2;
 		this.scene.add( eightLine );
     };
@@ -65,6 +65,24 @@ define([
 	World.prototype.startTimeline = function() {
 		// var walkAnimation = new Walk();
 		// walkAnimation.animate(this.person);
+		
+		this.moveActorAlongPath();
+	};
+
+	World.prototype.moveActorAlongPath = function() {
+		var timeline = new TimelineMax({
+			repeat: -1
+		});
+
+		timeline.insert(
+			TweenMax.to(this.person.centre, 20,
+				{ onUpdate: function(app, tween){
+					app.person.centre.position.x = app.eightPath.getPoint(tween.ratio).x;
+					app.person.centre.position.z = app.eightPath.getPoint(tween.ratio).y;
+
+				}, onUpdateParams:[this, "{self}"], ease: Linear.easeNone }
+			)
+		);
 	};
 
     return World;
