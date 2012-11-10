@@ -1,41 +1,39 @@
 /**
- * Arm @extends composite shape
+ * Arm @extends CompositeObject
  * 
- * @type {Walk.person.model.Arm}
+ * @type {Arm}
  */
-Walk.person.model.arm = {
+define([
 
-	materials: {
-		default: new THREE.MeshLambertMaterial({
-      		color: 0xCC0000
-    	})
-	},
+], function() {
 
-	scale: 1,
-	type: 'right',
+	// materials: {
+	// 	default: new THREE.MeshLambertMaterial({
+ //      		color: 0xCC0000
+ //    	})
+	// },
+	
+	function Arm(materials, scale, type) {
 
-	shoulder: null,
-	thigh: null,
-	knee: null,
-	calf: null,
-	ankle: null,
-	foot: null,
-
-	initialize: function(materials, scale, type) {
 		this.materials = materials || this.materials;
-		this.scale = scale || this.scale;
-		this.type = type || this.type;
+		this.scale = scale || 1;
+		this.type = type || 'right';
+
+		this.shoulder = null;
+		this.thigh = null;
+		this.knee = null;
+		this.calf = null;
+		this.ankle = null;
+		this.foot = null;
 
 		this.buildArm();
+	};
 
-		return this;
-	},
-
-	defaultMaterial: function() {
+	Arm.prototype.defaultMaterial = function() {
 		return this.materials.default;
-	},
+	};
 
-	buildArm: function(){
+	Arm.prototype.buildArm = function() {
 		var side = (this.type == 'right')? 1 : -1;
 
 		var shoulderWidth = this.scale * 0.23;
@@ -128,10 +126,11 @@ Walk.person.model.arm = {
 		this.hand.rotation.y = Math.PI/2;
 
         this.wrist.add(this.hand);
-	},
+	};
 
-	rootObject: function(){
+	Arm.prototype.rootObject = function() {
 		return this.shoulder;
-	}
+	};
 
-};
+	return Arm;
+});

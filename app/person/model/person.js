@@ -1,29 +1,32 @@
 /**
- * Person @extends composite shape
+ * Person @extends CompositeObject
  * 
- * @type {Walk.person}
+ * @type {Person}
  */
-Walk.person.model.person = {
+define([
 
-	materials: {
-		default: new THREE.MeshLambertMaterial({
-      		color: 0xCC0000
-    	})
-	},
+	"app/person/model/Arm",
+	"app/person/model/Head",
+	"app/person/model/Leg"
 
-	scale: 1,
+], function(Arm, Head, Leg) {
 
-	torsoPivot: null,
-	centre: new THREE.Object3D(),
-	pelvis: null,
-	leftLeg: null,
-	rightLeg: null,
-
-	initialize: function(materials, scale) {
+	// materials: {
+	// 	default: new THREE.MeshLambertMaterial({
+ //      		color: 0xCC0000
+ //    	})
+	// },
+	
+	function Person(materials, scale) {
 
 		this.materials = materials || this.materials;
-		this.scale = scale || this.scale;
-		
+		this.scale = scale || 1;
+	
+		this.torsoPivot = null;
+		this.centre = new THREE.Object3D();
+		this.pelvis = null;
+		this.leftLeg = null;
+		this.rightLeg = null;
 
 		this.buildTorso();
 		this.leftArm = this.buildArm('left');
@@ -34,29 +37,29 @@ Walk.person.model.person = {
 		this.centre.position.y = this.scale * 2.175;
 		this.buildPelvis();
 		
-		this.rightLeg = Object.create(Walk.person.model.leg).initialize(this.materials, this.scale);
+		this.rightLeg = new Leg(this.materials, this.scale);
 		this.rightLeg.rootObject().position.z = this.scale * 0.3;
 		this.centre.add(this.rightLeg.rootObject());
 
-		this.leftLeg = Object.create(Walk.person.model.leg).initialize(this.materials, this.scale, 'left');
+		this.leftLeg = new Leg(this.materials, this.scale, 'left');
 		this.leftLeg.rootObject().position.z = -this.scale * 0.3;
 		this.centre.add(this.leftLeg.rootObject());
 
 		return this;
-	},
+	};
 
-	attachHead: function() {
-		var head = Walk.person.model.head.initialize(this.materials, this.scale);
+	Person.prototype.attachHead = function() {
+		var head = new Head(this.materials, this.scale);
 
 		head.rootObject().position.y = this.scale * 0.96; // up
 
 		this.torso.add(head.rootObject());
 
 		return head;
-	},
+	};
 
-	buildArm: function(type) {
-		var arm = Object.create(Walk.person.model.arm).initialize(this.materials, this.scale, type);
+	Person.prototype.buildArm = function(type) {
+		var arm = new Arm(this.materials, this.scale, type);
 		arm.rootObject().scale.z = 0.5; // reset scale
 
 		arm.rootObject().position.y = this.scale * 0.38; // up
@@ -68,9 +71,9 @@ Walk.person.model.person = {
 		this.torso.add(arm.rootObject());
 
 		return arm;
-	},
+	};
 
-	buildPelvis: function() {
+	Person.prototype.buildPelvis = function() {
 		var radiusTop = this.scale * 0.24,
 			radiusBottom = this.scale * 0.28,
 			height = this.scale * 0.4,
@@ -90,9 +93,9 @@ Walk.person.model.person = {
         this.centre.add(this.pelvis);
 
 		// this.pelvis.position.y = this.scale * 2.175; // this.centre.position.y
-	},
+	};
 
-	buildTorso: function() {
+	Person.prototype.buildTorso = function() {
 		this.torsoPivot = new THREE.Object3D();
 		this.torsoPivot.position.y = 80;
 		this.torsoPivot.position.x = 24;
@@ -137,14 +140,15 @@ Walk.person.model.person = {
 	    this.torso.add(this.neck);
 
 	    return this.torso;
-	},
+	};
 
-	defaultMaterial: function() {
+	Person.prototype.defaultMaterial = function() {
 		return this.materials.default;
-	},
+	};
 
-	rootObject: function(){
+	Person.prototype.rootObject = function(){
 		return this.centre;
-	}
+	};
 
-};
+	return Person;
+});

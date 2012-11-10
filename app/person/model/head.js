@@ -1,21 +1,22 @@
 /**
- * Head @extends composite shape
+ * Arm @extends CompositeObject
  * 
- * @type {Walk.person.model.Head}
+ * @type {Head}
  */
-Walk.person.model.head = {
+define([
 
-	materials: {
-		default: new THREE.MeshLambertMaterial({
-      		color: 0xCC0000
-    	})
-	},
+], function() {
 
-	scale: 1,
+	// materials: {
+	// 	default: new THREE.MeshLambertMaterial({
+ //      		color: 0xCC0000
+ //    	})
+	// },
+	
+	function Head(materials, scale) {
 
-	initialize: function(materials, scale) {
 		this.materials = materials || this.materials;
-		this.scale = scale || this.scale;
+		this.scale = scale || 1;
 
  		var scullWidth = this.scale * 0.35;
 		this.scull = new THREE.Mesh(
@@ -75,14 +76,16 @@ Walk.person.model.head = {
         this.scull.add(this.nose);
 
 		return this;
-	},
+	};
 
-	defaultMaterial: function() {
+	Head.prototype.defaultMaterial = function() {
 		return this.materials.default;
-	},
+	};
 
-	rootObject: function(){
+	Head.prototype.rootObject = function(){
 		return this.scull;
-	}
+	};
 
-};
+	return Head;
+
+});

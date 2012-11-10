@@ -1,41 +1,39 @@
 /**
- * Leg @extends composite shape
+ * Leg @extends CompositeObject
  * 
- * @type {Walk.leg}
+ * @type {Head}
  */
-Walk.person.model.leg = {
+define([
 
-	materials: {
-		default: new THREE.MeshLambertMaterial({
-      		color: 0xCC0000
-    	})
-	},
+], function() {
 
-	scale: 1,
-	type: 'right',
+	// materials: {
+	// 	default: new THREE.MeshLambertMaterial({
+ //      		color: 0xCC0000
+ //    	})
+	// },
+	
+	function Leg(materials, scale, type) {
 
-	hipPivot: null,
-	thigh: null,
-	knee: null,
-	calf: null,
-	ankle: null,
-	foot: null,
-
-	initialize: function(materials, scale, type){
 		this.materials = materials || this.materials;
-		this.scale = scale || this.scale;
-		this.type = type || this.type;
+		this.scale = scale || 1;
+		this.type = type || 'right';
+
+		this.hipPivot = null;
+		this.thigh = null;
+		this.knee = null;
+		this.calf = null;
+		this.ankle = null;
+		this.foot = null;
 
 		this.buildLeg();
+	};
 
-		return this;
-	},
-
-	defaultMaterial: function() {
+	Leg.prototype.defaultMaterial = function() {
 		return this.materials.default;
-	},
+	};
 
-	buildLeg: function(){
+	Leg.prototype.buildLeg = function() {
 
 		var hipWidth = this.scale * 0.25;
 		this.hipPivot = new THREE.Mesh(
@@ -109,10 +107,11 @@ Walk.person.model.leg = {
         this.foot.position.y = -this.scale * 0.1;
         this.foot.position.x = this.scale * 0.15;
         this.ankle.add(this.foot);
-	},
+	};
 
-	rootObject: function(){
+	Leg.prototype.rootObject = function() {
 		return this.hipPivot;
-	}
+	};
 
-};
+	return Leg;
+});

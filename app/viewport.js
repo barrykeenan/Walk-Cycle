@@ -1,21 +1,26 @@
 /**
  * Requires Greensock TweenLite for animation
  * 
- * @type {Walk.viewport}
+ * @type {Viewport}
  */
-Walk.viewport = {
+define([
 
-	containerEl: null,
+	"three.js/controls/TrackballControls",
+	"greensock/minified/TweenMax.min"
+
+], function() {
+
+	// containerEl: null,
 
 	/**
 	 * Render component
 	 * @type {THREE.WebGLRenderer}
 	 */
-	renderer: null,
+	// renderer: null,
 
-	objects: [],
+	// objects: [],
 
-	initialize: function(cfg) {
+	function Viewport(cfg) {
 
 		// TODO: use apply
 		this.containerEl = cfg.containerEl;
@@ -44,11 +49,9 @@ Walk.viewport = {
 	 	TweenMax.ticker.addEventListener("tick", this.animate.bind(this));
 
 		this.world.startTimeline();
+	};
 
-	 	return this;
-	},
-
-	initContainer: function() {
+	Viewport.prototype.initContainer = function() {
 		this.el = document.createElement( 'div' );
 		this.el.style.position = 'absolute';
 		this.el.style.backgroundColor = '#aaa';
@@ -58,9 +61,9 @@ Walk.viewport = {
 		this.el.style.MozUserSelect = 'none';
 	
 		this.containerEl.appendChild(this.el);
-	},
+	};
 
-	initRenderComponent: function() {
+	Viewport.prototype.initRenderComponent = function() {
 		this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: false, clearColor: 0xaaaaaa, clearAlpha: 1 } );
 		this.renderer.setSize( window.innerWidth, window.innerHeight );
 		// this.renderer.setSize( 800, 600 );
@@ -69,13 +72,13 @@ Walk.viewport = {
 		this.renderer.autoUpdateScene = false;
 
 		this.el.appendChild( this.renderer.domElement );
-	},
+	};
 
     /**
      * controls need to be added *after* main logic,
      * otherwise controls.enabled doesn't work.
      */
-    initControls: function(camera, containerEl) {
+    Viewport.prototype.initControls = function(camera, containerEl) {
 		this.controls = new THREE.TrackballControls( camera, containerEl );
 		this.controls.rotateSpeed = 1.0;
 		this.controls.zoomSpeed = 1.2;
@@ -89,9 +92,9 @@ Walk.viewport = {
 
 		// set scope to this
 		// this.controls.addEventListener( 'change', this.render.bind(this) );
-    },
+    };
 
-	addSceneHelpers: function() {
+	Viewport.prototype.addSceneHelpers = function() {
 		this.sceneHelpers = new THREE.Scene();
 
 		var size = 500, step = 25;
@@ -114,9 +117,9 @@ Walk.viewport = {
 
 		var grid = new THREE.Line( geometry, material, THREE.LinePieces );
 		this.sceneHelpers.add( grid );
-	},
+	};
 
-	addCamera: function() {
+	Viewport.prototype.addCamera = function() {
 		// set some camera attributes
 		var VIEW_ANGLE = 50,
 			ASPECT = window.innerWidth / window.innerHeight,
@@ -132,9 +135,9 @@ Walk.viewport = {
 		// this.camera.position.set( 0, 800, 0 );
 
 		this.scene.add( this.camera );
-	},
+	};
 
-	addLights: function() {
+	Viewport.prototype.addLights = function() {
 		var light = new THREE.DirectionalLight( 0xffffff );
 		light.position.set( 1, 0.5, 0 ).normalize();
 		this.scene.add( light );
@@ -142,9 +145,9 @@ Walk.viewport = {
 		var light = new THREE.DirectionalLight( 0xffffff, 0.5 );
 		light.position.set( - 1, - 0.5, 0 ).normalize();
 		this.scene.add( light );
-	},
+	};
 
-	addProps: function() {
+	Viewport.prototype.addProps = function() {
 	 	// set up the sphere vars
 		var radius = 10,
 		    segments = 6,
@@ -165,21 +168,23 @@ Walk.viewport = {
 		sphere2.position.x = 200;
 
 		this.scene.add(sphere2);
-    },
+    };
 		
-	animate: function() {
+	Viewport.prototype.animate = function() {
 		this.controls.update();
 
 		this.render();
-	},
+	};
 
-	render: function() {
+	Viewport.prototype.render = function() {
 		this.sceneHelpers.updateMatrixWorld();
 		this.scene.updateMatrixWorld();
 
 		this.renderer.clear();
 		this.renderer.render(this.scene, this.camera);
 		this.renderer.render(this.sceneHelpers, this.camera);
-	}
+	};
 
-};
+	return Viewport;
+
+});

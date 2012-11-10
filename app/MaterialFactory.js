@@ -1,40 +1,45 @@
 /**
  * Used to store various textures
- * @type {Object}
+ * 
+ * @type {MaterialFactory}
  */
-Walk.materialFactory = {
+define(function() {
 
-	skin: function() {
+	function MaterialFactory() {};
+
+	MaterialFactory.prototype.skin = function() {
 		return new THREE.MeshLambertMaterial({
       		color: 0xFFE2C5
     	});
-	},
+	};
 
-	hair: function() {
+	MaterialFactory.prototype.hair = function() {
 		return new THREE.MeshLambertMaterial({
       		color: 0x333333
     	});
-	},
+	};
 
-	tshirt: function() {
+	MaterialFactory.prototype.tshirt = function() {
 		return new THREE.MeshLambertMaterial({
       		color: 0xeeffff
     	});
-	},
+	};
 
-	pants: function() {
+	MaterialFactory.prototype.pants = function() {
 		return new THREE.MeshLambertMaterial({
       		color: 0x333366
     	});
-	},
+	};
 
-	wireframe: function() {
+	MaterialFactory.prototype.wireframe = function() {
 		return new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-	},
+	};
 
-	solid: function() {
+	MaterialFactory.prototype.solid = function() {
 		return new THREE.MeshLambertMaterial({
       		color: 0xCCcccc
     	});
-	}
-};
+	};
+
+	return MaterialFactory;
+});
