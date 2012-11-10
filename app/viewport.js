@@ -36,10 +36,10 @@ define([
 		this.addSceneHelpers();
 
 		this.addCamera();
-		this.addLights();
 
 		this.addProps();
 		this.world.addProps();
+		this.world.addLights();
 
 		this.initControls(this.camera, this.containerEl);
 
@@ -135,16 +135,6 @@ define([
 		// this.camera.position.set( 0, 800, 0 );
 
 		this.scene.add( this.camera );
-	};
-
-	Viewport.prototype.addLights = function() {
-		var light = new THREE.DirectionalLight( 0xffffff );
-		light.position.set( 1, 0.5, 0 ).normalize();
-		this.scene.add( light );
-
-		var light = new THREE.DirectionalLight( 0xffffff, 0.5 );
-		light.position.set( - 1, - 0.5, 0 ).normalize();
-		this.scene.add( light );
 	};
 
 	Viewport.prototype.addProps = function() {

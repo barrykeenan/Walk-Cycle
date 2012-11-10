@@ -16,7 +16,6 @@ define([
 		this.materials = materialFactory;
 	};
 
-
 	/**
 	 * Called from Viewport
 	 */
@@ -41,6 +40,19 @@ define([
 		eightLine.rotation.x = Math.PI/2;
 		this.scene.add( eightLine );
     };
+
+	/**
+	 * Called from Viewport
+	 */
+    World.prototype.addLights = function() {
+		var light = new THREE.DirectionalLight( 0xffffff );
+		light.position.set( 1, 0.5, 0 ).normalize();
+		this.scene.add( light );
+
+		var light = new THREE.DirectionalLight( 0xffffff, 0.5 );
+		light.position.set( - 1, - 0.5, 0 ).normalize();
+		this.scene.add( light );
+	};
 
 	World.prototype.createLine = function(shape, color) {
 		var points = shape.createPointsGeometry();
