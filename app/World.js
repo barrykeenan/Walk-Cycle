@@ -6,10 +6,11 @@
 define([
 
 	"app/shapes/FigureEight",
+	"app/shapes/FigureEight3",
 	"app/person/model/Person",
 	"app/person/animations/Walk"
 
-], function(FigureEight, Person, Walk) {
+], function(FigureEight, FigureEight3, Person, Walk) {
 
 	function World(materialFactory) {
 		this.materials = materialFactory;
@@ -19,6 +20,11 @@ define([
 	 * Called from Viewport
 	 */
 	World.prototype.addProps = function() {
+
+		var colours = {
+			lime: 0x00ff11,
+			magenta: 0xff00f0
+		};
 
 		var materials = {
 			skin: this.materials.skin(),
@@ -34,10 +40,12 @@ define([
 		this.scene.add(this.person.rootObject());
 
 
-		this.eightPath = new FigureEight(400);
-		var eightLine = this.createLine(this.eightPath, 0x00ff11 );
-		eightLine.rotation.x = Math.PI/2;
-		this.scene.add( eightLine );
+		this.walkPath = new FigureEight3(400);
+		// Utils.strokePath
+		this.strokePath(this.walkPath, colours.lime);
+
+		this.cameraPath = new FigureEight3(400);
+		this.strokePath(this.cameraPath, colours.magenta);
     };
 
 	/**
@@ -53,10 +61,11 @@ define([
 		this.scene.add( light );
 	};
 
-	World.prototype.createLine = function(shape, color) {
-		var points = shape.createPointsGeometry();
+	World.prototype.strokePath = function(path, color) {
+		// var points = shape.createPointsGeometry();
 
-		return new THREE.Line( points, new THREE.LineBasicMaterial( { color: color, linewidth: 2 } ) );
+		var stroke = new THREE.Line(path.geometry(), new THREE.LineBasicMaterial( { color: color, linewidth: 2 } ) );
+		this.scene.add(stroke);
 	};
 
     /**
@@ -66,10 +75,10 @@ define([
 		// var walkAnimation = new Walk();
 		// walkAnimation.animate(this.person);
 		
-		this.moveActorAlongPath(true);
+		// this.moveActorAlongPath(this.walkPath, true);
 	};
 
-	World.prototype.moveActorAlongPath = function(orientToPath) {
+	World.prototype.moveActorAlongPath = function(path, orientToPath) {
 		var timeline = new TimelineMax({
 			repeat: -1
 		});
@@ -77,13 +86,13 @@ define([
 		timeline.insert(
 			TweenMax.to(this.person.centre, 20,
 				{ onUpdate: function(app, tween){
-					var pathPosition = app.eightPath.getPoint(tween.ratio);
+					var pathPosition = path.getPoint(tween.ratio);
 					
 					app.person.centre.position.x = pathPosition.x;
 					app.person.centre.position.z = pathPosition.y;
 
 					if(orientToPath===true) {
-						var tangent = app.eightPath.getTangent(tween.ratio);
+						var tangent = path.getTangent(tween.ratio);
 						var angle = Math.atan2(-tangent.y, tangent.x);
 						app.person.centre.rotation.y = angle;
 					}
