@@ -41,12 +41,22 @@ define([
 		this.scene.add(this.person.rootObject());
 
 
-		this.walkPath = new FigureEight3(400);
+		this.walkPath = new FigureEight3(400, 200);
 		// Utils.strokePath
 		this.strokePath(this.walkPath, colours.lime);
 
 		this.cameraPath = new RaisedFigureEight3(500, 100, 600);
 		this.strokePath(this.cameraPath, colours.magenta);
+
+
+		// Move this to the viewport
+
+		// var splineCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 5000);
+		this.splineCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 100);
+		this.scene.add(this.splineCamera);
+
+		this.cameraHelper = new THREE.CameraHelper(this.splineCamera);
+		this.scene.add(this.cameraHelper);
     };
 
 	/**
@@ -76,29 +86,38 @@ define([
 		var walkAnimation = new Walk();
 		walkAnimation.animate(this.person);
 		
-		this.moveActorAlongPath(this.walkPath, true);
+		this.motionPath(this.person.centre, this.walkPath, {
+			orientToPath: true,
+			snap: {y: false}
+		});
+
+		this.motionPath(this.splineCamera, this.cameraPath, {
+		});
 	};
 
-	World.prototype.moveActorAlongPath = function(path, orientToPath) {
+	World.prototype.motionPath = function(object3D, path, options) {
+		options.snap = options.snap || {};
+
 		var timeline = new TimelineMax({
 			repeat: -1
 		});
 
 		timeline.insert(
-			TweenMax.to(this.person.centre, 20,
-				{ onUpdate: function(app, tween){
+			TweenMax.to(object3D, 20,
+				{ onUpdate: function(object3D, tween){
 					var pathPosition = path.getPoint(tween.ratio);
 					
-					app.person.centre.position.x = pathPosition.x;
-					app.person.centre.position.z = pathPosition.z;
+					object3D.position.x = pathPosition.x;
+					if(options.snap.y!==false) { object3D.position.y = pathPosition.y; }
+					object3D.position.z = pathPosition.z;
 
-					if(orientToPath===true) {
+					if(options.orientToPath===true) {
 						var tangent = path.getTangent(tween.ratio);
 						var angle = Math.atan2(-tangent.z, tangent.x);
-						app.person.centre.rotation.y = angle;
+						object3D.rotation.y = angle;
 					}
 
-				}, onUpdateParams:[this, "{self}"], ease: Linear.easeNone }
+				}, onUpdateParams:[object3D, "{self}"], ease: Linear.easeNone }
 			)
 		);
 	};

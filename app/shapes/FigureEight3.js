@@ -11,19 +11,19 @@ define([
 
 	var _numPoints = 100;
 
-	function FigureEight3(radius, smoothness) {
+	function FigureEight3(radius, height, smoothness) {
 		// smooth my curve over this many points
 		_numPoints = smoothness || _numPoints;
 
 		THREE.ClosedSplineCurve3.call(this, [
-		   new THREE.Vector3(0, 0, radius*2),
-		   new THREE.Vector3(radius, 0, radius),
+		   new THREE.Vector3(0, height, radius*2),
+		   new THREE.Vector3(radius, height, radius),
 
-		   new THREE.Vector3(-radius, 0, -radius),
-		   new THREE.Vector3(0, 0, -radius*2),
+		   new THREE.Vector3(-radius, height, -radius),
+		   new THREE.Vector3(0, height, -radius*2),
 
-		   new THREE.Vector3(radius, 0, -radius),
-		   new THREE.Vector3(-radius, 0, radius)
+		   new THREE.Vector3(radius, height, -radius),
+		   new THREE.Vector3(-radius, height, radius)
 		]);
 	};
 
