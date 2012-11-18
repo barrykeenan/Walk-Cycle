@@ -7,10 +7,11 @@ define([
 
 	"app/shapes/FigureEight",
 	"app/shapes/FigureEight3",
+	"app/shapes/RaisedFigureEight3",
 	"app/person/model/Person",
 	"app/person/animations/Walk"
 
-], function(FigureEight, FigureEight3, Person, Walk) {
+], function(FigureEight, FigureEight3, RaisedFigureEight3, Person, Walk) {
 
 	function World(materialFactory) {
 		this.materials = materialFactory;
@@ -44,7 +45,7 @@ define([
 		// Utils.strokePath
 		this.strokePath(this.walkPath, colours.lime);
 
-		this.cameraPath = new FigureEight3(400);
+		this.cameraPath = new RaisedFigureEight3(500, 100, 300);
 		this.strokePath(this.cameraPath, colours.magenta);
     };
 
