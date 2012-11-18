@@ -45,7 +45,7 @@ define([
 		// Utils.strokePath
 		this.strokePath(this.walkPath, colours.lime);
 
-		this.cameraPath = new RaisedFigureEight3(500, 100, 300);
+		this.cameraPath = new RaisedFigureEight3(500, 100, 600);
 		this.strokePath(this.cameraPath, colours.magenta);
     };
 
@@ -73,10 +73,10 @@ define([
 	 * Called from Viewport
 	 */
 	World.prototype.startTimeline = function() {
-		// var walkAnimation = new Walk();
-		// walkAnimation.animate(this.person);
+		var walkAnimation = new Walk();
+		walkAnimation.animate(this.person);
 		
-		// this.moveActorAlongPath(this.walkPath, true);
+		this.moveActorAlongPath(this.walkPath, true);
 	};
 
 	World.prototype.moveActorAlongPath = function(path, orientToPath) {
@@ -90,11 +90,11 @@ define([
 					var pathPosition = path.getPoint(tween.ratio);
 					
 					app.person.centre.position.x = pathPosition.x;
-					app.person.centre.position.z = pathPosition.y;
+					app.person.centre.position.z = pathPosition.z;
 
 					if(orientToPath===true) {
 						var tangent = path.getTangent(tween.ratio);
-						var angle = Math.atan2(-tangent.y, tangent.x);
+						var angle = Math.atan2(-tangent.z, tangent.x);
 						app.person.centre.rotation.y = angle;
 					}
 
