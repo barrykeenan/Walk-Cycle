@@ -107,9 +107,9 @@ define([
 				{ onUpdate: function(object3D, tween){
 					var pathPosition = path.getPoint(tween.ratio);
 					
-					object3D.position.x = pathPosition.x;
+					if(options.snap.x!==false) { object3D.position.x = pathPosition.x; }
 					if(options.snap.y!==false) { object3D.position.y = pathPosition.y; }
-					object3D.position.z = pathPosition.z;
+					if(options.snap.z!==false) { object3D.position.z = pathPosition.z; }
 
 					if(options.orientToPath===true) {
 						var tangent = path.getTangent(tween.ratio);
