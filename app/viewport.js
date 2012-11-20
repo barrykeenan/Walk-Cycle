@@ -129,7 +129,8 @@ define([
 
     	// the camera starts at 0,0,0 so pull it back
 		// default
-		this.camera.position.set( 500, 300, 1200 );
+		// this.camera.position.set( 1800, 500, 0);
+		this.camera.position.set( 0, 2800, 0);
 
 		// straight down
 		// this.camera.position.set( 0, 800, 0 );
@@ -171,8 +172,16 @@ define([
 		this.scene.updateMatrixWorld();
 
 		this.renderer.clear();
-		this.renderer.render(this.scene, this.camera);
-		this.renderer.render(this.sceneHelpers, this.camera);
+		
+		var cameraView = false;
+		//TODO: set camera depth properties
+		if(cameraView) {
+			this.renderer.render(this.scene, this.world.splineCamera);
+		}
+		else {
+			this.renderer.render(this.scene, this.camera);
+			this.renderer.render(this.sceneHelpers, this.camera);
+		}		
 	};
 
 	return Viewport;
