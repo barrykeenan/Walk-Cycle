@@ -51,7 +51,7 @@ define([
 
 		// Move this to the viewport
 
-		// var splineCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 5000);
+		// this.splineCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 5000);
 		this.splineCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 100);
 		this.scene.add(this.splineCamera);
 
@@ -83,16 +83,34 @@ define([
 	 * Called from Viewport
 	 */
 	World.prototype.startTimeline = function() {
+
+		// this.actorMotion(this.person, this.walkPath);
+
+		this.cameraMotion(this.splineCamera, this.cameraPath);
+
+	};
+
+	World.prototype.cameraMotion = function(camera, path) {
+		var me = this;
+
+		var timeline = this.motionPath(camera, path, {
+			fn: function(camera) {
+				camera.lookAt(me.person.centre.position);
+				me.cameraHelper.update();
+			}	
+		});
+	};
+
+	World.prototype.actorMotion = function(person, path) {
 		var walkAnimation = new Walk();
-		walkAnimation.animate(this.person);
-		
-		this.motionPath(this.person.centre, this.walkPath, {
+		walkAnimation.animate(person);
+
+		var timeline = this.motionPath(person.centre, path, {
 			orientToPath: true,
-			snap: {y: false}
+			snap: { y: false }
 		});
 
-		this.motionPath(this.splineCamera, this.cameraPath, {
-		});
+		timeline.seek(2);
 	};
 
 	World.prototype.motionPath = function(object3D, path, options) {
@@ -102,24 +120,34 @@ define([
 			repeat: -1
 		});
 
-		timeline.insert(
-			TweenMax.to(object3D, 20,
-				{ onUpdate: function(object3D, tween){
-					var pathPosition = path.getPoint(tween.ratio);
-					
-					if(options.snap.x!==false) { object3D.position.x = pathPosition.x; }
-					if(options.snap.y!==false) { object3D.position.y = pathPosition.y; }
-					if(options.snap.z!==false) { object3D.position.z = pathPosition.z; }
+		var duration = 20;
 
-					if(options.orientToPath===true) {
-						var tangent = path.getTangent(tween.ratio);
-						var angle = Math.atan2(-tangent.z, tangent.x);
-						object3D.rotation.y = angle;
-					}
+		timeline.insert( TweenMax.to(object3D, duration, {
+			onUpdate: function(object3D, tween) {
 
-				}, onUpdateParams:[object3D, "{self}"], ease: Linear.easeNone }
-			)
-		);
+				var pathPosition = path.getPoint(tween.ratio);
+				
+				if(options.snap.x!==false) { object3D.position.x = pathPosition.x; }
+				if(options.snap.y!==false) { object3D.position.y = pathPosition.y; }
+				if(options.snap.z!==false) { object3D.position.z = pathPosition.z; }
+
+				if(options.orientToPath===true) {
+					var tangent = path.getTangent(tween.ratio);
+					var angle = Math.atan2(-tangent.z, tangent.x);
+					object3D.rotation.y = angle;
+				}
+
+				// callback
+				if(typeof options.fn === 'function') {
+					options.fn(object3D);
+					// TODO: return scope
+				}
+			},
+			onUpdateParams:[object3D, "{self}"],
+			ease: Linear.easeNone
+		}));
+
+		return timeline;
 	};
 
     return World;
