@@ -5,9 +5,15 @@ var Walk = Walk || {
 // Use require.js to load modules
 requirejs.config({
     baseUrl: Walk.baseUrl + 'lib',
-
     paths: {
         app: Walk.baseUrl + 'app'
+    },
+
+    shim: {
+        'three.js/controls/TrackballControls': {
+            deps: ['three.js/three.min'],
+            exports: 'THREE.TrackballControls'
+        }
     }
 });
 
