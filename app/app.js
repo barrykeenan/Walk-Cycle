@@ -1,9 +1,13 @@
+var Walk = Walk || {
+	baseUrl: ''
+}
+
 // Use require.js to load modules
 requirejs.config({
-    baseUrl: 'lib',
+    baseUrl: Walk.baseUrl + 'lib',
 
     paths: {
-        app: '../app'
+        app: Walk.baseUrl + 'app'
     }
 });
 
