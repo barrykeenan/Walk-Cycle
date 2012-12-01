@@ -6,11 +6,12 @@
 define([
 
 	"app/Utils",
+	"app/MotionPath",
 	"app/shapes/FigureEight3",
 	"app/person/model/Person",
 	"app/person/animations/Walk"
 
-], function(Utils, FigureEight3, Person, Walk) {
+], function(Utils, MotionPath, FigureEight3, Person, Walk) {
 
 	var _scene;
 	var _materials;
@@ -20,6 +21,9 @@ define([
 		lime: 0x00ff11,
 		magenta: 0xff00f0
 	};
+
+	var _actors = {};
+	var _paths = {};
 
 	function World(materialFactory) {
 		_materials = materialFactory;
@@ -46,12 +50,12 @@ define([
 			default: _materials.solid()
 		};
 
-		this.person = new Person(personMaterials, 100);
-		_scene.add(this.person.rootObject());
+		_actors.bob = new Person(personMaterials, 100);
+		_scene.add(_actors.bob.rootObject());
 
 
-		var walkPath = new FigureEight3(400, 200);
-		_utils.strokePath(walkPath, _colours.lime);
+		_paths.walkPath = new FigureEight3(400, 200);
+		_utils.strokePath(_paths.walkPath, _colours.lime);
     };
 
 	/**
@@ -71,8 +75,18 @@ define([
 	 * Called from Viewport
 	 */
 	World.prototype.startTimeline = function() {
+		this.actorMotion(_actors.bob, _paths.walkPath);
+	};
+
+	World.prototype.actorMotion = function(person, path) {
 		// var walkAnimation = new Walk();
-		// walkAnimation.animate(this.person);
+		// walkAnimation.animate(person);
+
+		var timeline = new TimelineMax({
+			repeat: -1
+		});
+
+		timeline.append( new MotionPath(person.centre, path, 20) );
 	};
 
     return World;
