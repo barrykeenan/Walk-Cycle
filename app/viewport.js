@@ -173,7 +173,7 @@ define([
 
 		this.renderer.clear();
 		
-		var cameraView = false;
+		var cameraView = true;
 		//TODO: set camera depth properties
 		if(cameraView) {
 			this.renderer.render(this.scene, this.world.splineCamera);
