@@ -29,10 +29,13 @@ require([
 
 ], function(MaterialFactory, World, Viewport) {
 
-	var world = new World(new MaterialFactory());
+	var materials = new MaterialFactory();
+
+	var world = new World(materials);
 
 	var viewport = new Viewport({
 		containerEl: document.getElementById('content'),
+		materials: materials,
 		world: world
 	});
 });
