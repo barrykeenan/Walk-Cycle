@@ -13,6 +13,7 @@ define([
 	var _pathControl = {
 		position: 0
 	};
+	var _options;
 
 	/**
 	 * Tweens along a path
@@ -26,12 +27,12 @@ define([
 	function MotionPath(object3D, path, duration, options) {
 		_path = path;
 
-		options = options || {};
-		options.position = options.position || { from: 0, to: 1 };
+		_options = options || {};
+		_options.position = options.position || { from: 0, to: 1 };
 
 		var tween = TweenMax.fromTo(_pathControl, duration,
-			{ position: options.position.from },
-			{ position: options.position.to,
+			{ position: _options.position.from },
+			{ position: _options.position.to,
 
 			onUpdate: this.onUpdate,
 			onUpdateParams:[object3D, "{self}"],
@@ -45,8 +46,15 @@ define([
 	MotionPath.prototype.onUpdate = function(object3D, tween) {
 		var pathPosition = _path.getPoint(_pathControl.position);
 				
-		object3D.position.x = pathPosition.x;
-		object3D.position.z = pathPosition.z;
+		if(_options.snap.x!==false) { object3D.position.x = pathPosition.x; }
+		if(_options.snap.y!==false) { object3D.position.y = pathPosition.y; }
+		if(_options.snap.z!==false) { object3D.position.z = pathPosition.z; }
+
+		if(_options.orientToPath===true) {
+			var tangent = _path.getTangent(_pathControl.position);
+			var angle = Math.atan2(-tangent.z, tangent.x);
+			object3D.rotation.y = angle;
+		}
 	};
 
 	return MotionPath;

@@ -79,14 +79,17 @@ define([
 	};
 
 	World.prototype.actorMotion = function(person, path) {
-		// var walkAnimation = new Walk();
-		// walkAnimation.animate(person);
+		var walkAnimation = new Walk();
+		walkAnimation.animate(person);
 
 		var timeline = new TimelineMax({
 			repeat: -1
 		});
 
-		timeline.append( new MotionPath(person.centre, path, 20) );
+		timeline.append( new MotionPath(person.centre, path, 20, {
+			orientToPath: true,
+			snap: { y: false }
+		}));
 	};
 
     return World;
