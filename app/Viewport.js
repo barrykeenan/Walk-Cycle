@@ -177,11 +177,20 @@ define([
 		_finalScene.updateMatrixWorld();
 
 		this.renderer.clear();
+
+		var options = {
+			camera: 'final',
+			showGuides: true,
+			showGrid: true
+		};
 		
-		var cameraView = true;
 		//TODO: set camera depth properties
-		if(cameraView) {
+		if(options.camera=='final') {
 			this.renderer.render(_finalScene, _world.splineCamera);
+
+			if(options.showGrid===true){
+				this.renderer.render(_helperScene, _world.splineCamera);
+			}
 		}
 		else {
 			this.renderer.render(_finalScene, _helperCam);
