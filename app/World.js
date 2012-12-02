@@ -58,18 +58,18 @@ define([
 		_paths.walkPath = new FigureEight3(400, 200);
 		_utils.strokePath(_paths.walkPath, _colours.lime);
 
-		this.cameraPath = new RaisedFigureEight3(600, 200, 600);
-		this.strokePath(this.cameraPath, colours.magenta);
+		_paths.cameraPath = new RaisedFigureEight3(600, 200, 600);
+		_utils.strokePath(_paths.cameraPath, _colours.magenta);
 
 
 		// Move this to the viewport
 
 		this.splineCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 5000);
 		// this.splineCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 100);
-		this.scene.add(this.splineCamera);
+		_scene.add(this.splineCamera);
 
 		this.cameraHelper = new THREE.CameraHelper(this.splineCamera);
-		this.scene.add(this.cameraHelper);
+		_scene.add(this.cameraHelper);
     };
 
 	/**
@@ -91,9 +91,24 @@ define([
 	World.prototype.startTimeline = function() {
 
 		this.actorMotion(_actors.bob, _paths.walkPath);
+		this.cameraMotion(this.splineCamera, _paths.cameraPath);
 
-		this.cameraMotion(this.splineCamera, this.cameraPath);
+	};
 
+	World.prototype.actorMotion = function(person, path) {
+		var walkAnimation = new Walk();
+		walkAnimation.animate(_actors.bob);
+
+		var timeline = new TimelineMax({
+			repeat: -1
+		});
+
+		timeline.append( this.motionPath(_actors.bob.rootObject(), path, 20, {
+			orientToPath: true,
+			snap: { y: false }
+		}));
+
+		timeline.seek(1);
 	};
 
 	World.prototype.cameraMotion = function(camera, path) {
@@ -123,24 +138,47 @@ define([
 
 	// TODO: refer to other camera as sceneCamera
 	World.prototype.updateCamera = function(camera) {
-		camera.lookAt(this.person.centre.position);
+		camera.lookAt(_actors.bob.rootObject().position);
 		this.cameraHelper.update();
 	};
 
-	World.prototype.actorMotion = function(person, path) {
-		var walkAnimation = new Walk();
-		walkAnimation.animate(person);
+	World.prototype.motionPath = function(object3D, path, duration, options) {
+		options = options || {};
+		options.snap = options.snap || {};
+		options.position = options.position || { from: 0, to: 1 };
 
-		var timeline = new TimelineMax({
-			repeat: -1
+		var pathControl = {
+			position: 0
+		};
+
+		var tween = TweenMax.fromTo(pathControl, duration,
+			{ position: options.position.from },
+			{ position: options.position.to,
+
+			onUpdate: function(object3D, tween) {
+				var pathPosition = path.getPoint(pathControl.position);
+				
+				if(options.snap.x!==false) { object3D.position.x = pathPosition.x; }
+				if(options.snap.y!==false) { object3D.position.y = pathPosition.y; }
+				if(options.snap.z!==false) { object3D.position.z = pathPosition.z; }
+
+				if(options.orientToPath===true) {
+					var tangent = path.getTangent(pathControl.position);
+					var angle = Math.atan2(-tangent.z, tangent.x);
+					object3D.rotation.y = angle;
+				}
+
+				// callback
+				if(typeof options.fn === 'function') {
+					options.scope = options.scope || this;
+					options.fn.call(options.scope, object3D);
+				}
+			},
+			onUpdateParams:[object3D, "{self}"],
+			ease: Linear.easeNone
 		});
 
-		timeline.append( new MotionPath(person.centre, path, 20) );
-			orientToPath: true,
-			snap: { y: false }
-		}));
-
-		timeline.seek(1);
+		return tween;
 	};
 
     return World;
