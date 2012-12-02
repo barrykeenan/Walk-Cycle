@@ -32,14 +32,14 @@ define([
 		_utils = new Utils(_scene);
 	};
 
-	World.prototype.scene = function() {
-		return _scene;
-	};
-
 	/**
 	 * Called from Viewport
 	 */
 	World.prototype.addProps = function() {
+
+		_scene.fog = new THREE.Fog( 0xffffff, 2000, 4000 );
+
+		this.addGround();
 
 		var personMaterials = {
 			skin: _materials.skin(),
@@ -56,10 +56,10 @@ define([
 
 
 		_paths.walkPath = new FigureEight3(400, 200);
-		_utils.strokePath(_paths.walkPath, _colours.lime);
+		// _utils.strokePath(_paths.walkPath, _colours.lime);
 
 		_paths.cameraPath = new RaisedFigureEight3(600, 200, 600);
-		_utils.strokePath(_paths.cameraPath, _colours.magenta);
+		// _utils.strokePath(_paths.cameraPath, _colours.magenta);
 
 
 		// Move this to the viewport
@@ -71,6 +71,24 @@ define([
 		this.cameraHelper = new THREE.CameraHelper(this.splineCamera);
 		_scene.add(this.cameraHelper);
     };
+
+    /**
+	 * Called from Viewport
+	 */
+	World.prototype.addGround = function() {
+
+		var gt = THREE.ImageUtils.loadTexture( "textures/terrain/grasslight-big.jpg" );
+		var gg = new THREE.PlaneGeometry( 16000, 16000 );
+		var gm = new THREE.MeshPhongMaterial( { color: 0xffffff, map: gt, perPixel: true } );
+
+		var ground = new THREE.Mesh( gg, gm );
+		ground.material.map.repeat.set( 64, 64 );
+		ground.material.map.wrapS = ground.material.map.wrapT = THREE.RepeatWrapping;
+		ground.rotation.x = - Math.PI/2;
+		ground.receiveShadow = true;
+
+		_scene.add( ground );
+	};
 
 	/**
 	 * Called from Viewport
@@ -140,6 +158,10 @@ define([
 	World.prototype.updateCamera = function(camera) {
 		camera.lookAt(_actors.bob.rootObject().position);
 		this.cameraHelper.update();
+	};
+
+	World.prototype.scene = function() {
+		return _scene;
 	};
 
     return World;

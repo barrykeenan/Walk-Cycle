@@ -44,7 +44,6 @@ define([
 
 		this.addCamera();
 
-		this.addProps();
 		_world.addProps();
 		_world.addLights();
 
@@ -142,29 +141,6 @@ define([
 
 		_helperScene.add( _helperCam );
 	};
-
-	Viewport.prototype.addProps = function() {
-	 	// set up the sphere vars
-		var radius = 10,
-		    segments = 6,
-		    rings = 6;
-
-		var sphere1 = new THREE.Mesh(
-			new THREE.SphereGeometry(radius, segments, rings),
-			this.materials.solid()
-		);
-		sphere1.position.x = -200;
-
-		_helperScene.add(sphere1);
-		
-		var sphere2 = new THREE.Mesh(
-			new THREE.SphereGeometry(radius, segments, rings),
-			this.materials.solid()
-		);
-		sphere2.position.x = 200;
-
-		_helperScene.add(sphere2);
-    };
 		
 	Viewport.prototype.animate = function() {
 		this.controls.update();
@@ -181,7 +157,7 @@ define([
 		var options = {
 			camera: 'final',
 			showGuides: true,
-			showGrid: true
+			showGrid: false
 		};
 		
 		//TODO: set camera depth properties
