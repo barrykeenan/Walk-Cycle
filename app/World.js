@@ -5,16 +5,35 @@
  */
 define([
 
-	"app/shapes/FigureEight",
+	"app/Utils",
+	"app/MotionPath",
 	"app/shapes/FigureEight3",
 	"app/shapes/RaisedFigureEight3",
 	"app/person/model/Person",
 	"app/person/animations/Walk"
 
-], function(FigureEight, FigureEight3, RaisedFigureEight3, Person, Walk) {
+], function(Utils, MotionPath, FigureEight3, RaisedFigureEight3, Person, Walk) {
+
+	var _scene;
+	var _materials;
+	var _utils;
+
+	var _colours = {
+		lime: 0x00ff11,
+		magenta: 0xff00f0
+	};
+
+	var _actors = {};
+	var _paths = {};
 
 	function World(materialFactory) {
-		this.materials = materialFactory;
+		_materials = materialFactory;
+		_scene = new THREE.Scene();
+		_utils = new Utils(_scene);
+	};
+
+	World.prototype.scene = function() {
+		return _scene;
 	};
 
 	/**
@@ -22,28 +41,22 @@ define([
 	 */
 	World.prototype.addProps = function() {
 
-		var colours = {
-			lime: 0x00ff11,
-			magenta: 0xff00f0
+		var personMaterials = {
+			skin: _materials.skin(),
+			hair: _materials.hair(),
+
+			tshirt: _materials.tshirt(),
+			pants: _materials.pants(),
+
+			default: _materials.solid()
 		};
 
-		var materials = {
-			skin: this.materials.skin(),
-			hair: this.materials.hair(),
-
-			tshirt: this.materials.tshirt(),
-			pants: this.materials.pants(),
-
-			default: this.materials.solid()
-		};
-
-		this.person = new Person(materials, 100);
-		this.scene.add(this.person.rootObject());
+		_actors.bob = new Person(personMaterials, 100);
+		_scene.add(_actors.bob.rootObject());
 
 
-		this.walkPath = new FigureEight3(400, 200);
-		// Utils.strokePath
-		this.strokePath(this.walkPath, colours.lime);
+		_paths.walkPath = new FigureEight3(400, 200);
+		_utils.strokePath(_paths.walkPath, _colours.lime);
 
 		this.cameraPath = new RaisedFigureEight3(600, 200, 600);
 		this.strokePath(this.cameraPath, colours.magenta);
@@ -65,20 +78,11 @@ define([
     World.prototype.addLights = function() {
 		var light = new THREE.DirectionalLight( 0xffffff );
 		light.position.set( 1, 0.5, 0 ).normalize();
-		this.scene.add( light );
+		_scene.add( light );
 
 		var light = new THREE.DirectionalLight( 0xffffff, 0.5 );
 		light.position.set( - 1, - 0.5, 0 ).normalize();
-		this.scene.add( light );
-	};
-
-
-	// TODO: stroke the helperScene so when switch camera, not seen
-	World.prototype.strokePath = function(path, color) {
-		// var points = shape.createPointsGeometry();
-
-		var stroke = new THREE.Line(path.geometry(), new THREE.LineBasicMaterial( { color: color, linewidth: 2 } ) );
-		this.scene.add(stroke);
+		_scene.add( light );
 	};
 
     /**
@@ -86,7 +90,7 @@ define([
 	 */
 	World.prototype.startTimeline = function() {
 
-		this.actorMotion(this.person, this.walkPath);
+		this.actorMotion(_actors.bob, _paths.walkPath);
 
 		this.cameraMotion(this.splineCamera, this.cameraPath);
 
@@ -131,50 +135,12 @@ define([
 			repeat: -1
 		});
 
-		timeline.append( this.motionPath(person.centre, path, 20, {
+		timeline.append( new MotionPath(person.centre, path, 20) );
 			orientToPath: true,
 			snap: { y: false }
 		}));
 
 		timeline.seek(1);
-	};
-
-	World.prototype.motionPath = function(object3D, path, duration, options) {
-		options.snap = options.snap || {};
-		options.position = options.position || { from: 0, to: 1 };
-
-		var pathControl = {
-			position: 0
-		};
-
-		var tween = TweenMax.fromTo(pathControl, duration,
-			{ position: options.position.from },
-			{ position: options.position.to,
-
-			onUpdate: function(object3D, tween) {
-				var pathPosition = path.getPoint(pathControl.position);
-				
-				if(options.snap.x!==false) { object3D.position.x = pathPosition.x; }
-				if(options.snap.y!==false) { object3D.position.y = pathPosition.y; }
-				if(options.snap.z!==false) { object3D.position.z = pathPosition.z; }
-
-				if(options.orientToPath===true) {
-					var tangent = path.getTangent(pathControl.position);
-					var angle = Math.atan2(-tangent.z, tangent.x);
-					object3D.rotation.y = angle;
-				}
-
-				// callback
-				if(typeof options.fn === 'function') {
-					options.scope = options.scope || this;
-					options.fn.call(options.scope, object3D);
-				}
-			},
-			onUpdateParams:[object3D, "{self}"],
-			ease: Linear.easeNone
-		});
-
-		return tween;
 	};
 
     return World;

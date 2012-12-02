@@ -9,12 +9,8 @@ define([
 
 ], function() {
 
-	// var _foobar = 'private';
-
 	function FigureEight(radius) {
 		THREE.Shape.call(this);
-
-		// console.log(_foobar);
 
 		this.moveTo( 0, radius*2 );
 			

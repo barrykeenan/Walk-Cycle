@@ -20,26 +20,28 @@ define([
 
 	// objects: [],
 
+	var _world;
+	var _finalScene;
+
 	function Viewport(cfg) {
 
 		// TODO: use apply
 		this.containerEl = cfg.containerEl;
-		this.world = cfg.world;
-		this.materials = cfg.world.materials;
+		_world = cfg.world;
+		this.materials = cfg.materials;
 		this.animateFn = cfg.animateFn;
 
 		this.initContainer();
 		this.initRenderComponent();
 		
-		this.scene = new THREE.Scene();
-		this.world.scene = this.scene;
+		_finalScene = _world.scene();
 		this.addSceneHelpers();
 
 		this.addCamera();
 
 		this.addProps();
-		this.world.addProps();
-		this.world.addLights();
+		_world.addProps();
+		_world.addLights();
 
 		this.initControls(this.camera, this.containerEl);
 
@@ -48,7 +50,7 @@ define([
 	 	// start animation loop
 	 	TweenMax.ticker.addEventListener("tick", this.animate.bind(this));
 
-		this.world.startTimeline();
+		_world.startTimeline();
 	};
 
 	Viewport.prototype.initContainer = function() {
@@ -135,7 +137,7 @@ define([
 		// straight down
 		// this.camera.position.set( 0, 800, 0 );
 
-		this.scene.add( this.camera );
+		_finalScene.add( this.camera );
 	};
 
 	Viewport.prototype.addProps = function() {
@@ -150,7 +152,7 @@ define([
 		);
 		sphere1.position.x = -200;
 
-		this.scene.add(sphere1);
+		_finalScene.add(sphere1);
 		
 		var sphere2 = new THREE.Mesh(
 			new THREE.SphereGeometry(radius, segments, rings),
@@ -158,7 +160,7 @@ define([
 		);
 		sphere2.position.x = 200;
 
-		this.scene.add(sphere2);
+		_finalScene.add(sphere2);
     };
 		
 	Viewport.prototype.animate = function() {
@@ -169,7 +171,7 @@ define([
 
 	Viewport.prototype.render = function() {
 		this.sceneHelpers.updateMatrixWorld();
-		this.scene.updateMatrixWorld();
+		_finalScene.updateMatrixWorld();
 
 		this.renderer.clear();
 		
@@ -179,7 +181,7 @@ define([
 			this.renderer.render(this.scene, this.world.splineCamera);
 		}
 		else {
-			this.renderer.render(this.scene, this.camera);
+			this.renderer.render(_finalScene, this.camera);
 			this.renderer.render(this.sceneHelpers, this.camera);
 		}		
 	};
