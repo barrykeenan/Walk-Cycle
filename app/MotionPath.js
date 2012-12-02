@@ -6,13 +6,12 @@
 define([
 
 	"greensock/minified/TweenMax.min"
+	// "greensock/uncompressed/TweenMax"
 
 ], function() {
 
-	var _path;
-	var _pathControl = {
-		position: 0
-	};
+	// private class (shared) variables
+	// var _PATH;
 
 	/**
 	 * Tweens along a path
@@ -24,29 +23,46 @@ define([
 	 *                          position: Portion of the path to move along. Default is the whole path.
 	 */
 	function MotionPath(object3D, path, duration, options) {
-		_path = path;
+		this._pathControl = {
+			position: 0
+		};
+		this._path = path;
+		this._options = options || {};
 
-		options = options || {};
-		options.position = options.position || { from: 0, to: 1 };
+		this._options.snap = this._options.snap || {};
+		this._options.position = this._options.position || { from: 0, to: 1 };
 
-		var tween = TweenMax.fromTo(_pathControl, duration,
-			{ position: options.position.from },
-			{ position: options.position.to,
-
-			onUpdate: this.onUpdate,
-			onUpdateParams:[object3D, "{self}"],
-
+		var tween = TweenMax.fromTo(this._pathControl, duration,
+			{ position: this._options.position.from },
+			{ position: this._options.position.to,
 			ease: Linear.easeNone
 		});
+
+		tween.eventCallback('onUpdate', this.moveObject, [object3D, "{self}"], this);
 
 		return tween;
 	};
 
-	MotionPath.prototype.onUpdate = function(object3D, tween) {
-		var pathPosition = _path.getPoint(_pathControl.position);
+	MotionPath.prototype = Object.create( TweenMax.prototype );
+
+	MotionPath.prototype.moveObject = function(object3D, tween) {
+		var pathPosition = this._path.getPoint(this._pathControl.position);
 				
-		object3D.position.x = pathPosition.x;
-		object3D.position.z = pathPosition.z;
+		if(this._options.snap.x!==false) { object3D.position.x = pathPosition.x; }
+		if(this._options.snap.y!==false) { object3D.position.y = pathPosition.y; }
+		if(this._options.snap.z!==false) { object3D.position.z = pathPosition.z; }
+
+		if(this._options.orientToPath===true) {
+			var tangent = this._path.getTangent(this._pathControl.position);
+			var angle = Math.atan2(-tangent.z, tangent.x);
+			object3D.rotation.y = angle;
+		}
+
+		// callback
+		if(typeof this._options.fn === 'function') {
+			this._options.scope = this._options.scope || this;
+			this._options.fn.call(this._options.scope, object3D);
+		}
 	};
 
 	return MotionPath;
