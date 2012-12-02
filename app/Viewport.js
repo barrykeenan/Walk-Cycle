@@ -6,7 +6,8 @@
 define([
 
 	"three.js/controls/TrackballControls",
-	"greensock/minified/TweenMax.min"
+	// "greensock/minified/TweenMax.min"
+	"greensock/uncompressed/TweenMax"
 
 ], function() {
 
@@ -23,6 +24,9 @@ define([
 	var _world;
 	var _finalScene;
 
+	var _helperScene;
+	var _helperCam;
+
 	function Viewport(cfg) {
 
 		// TODO: use apply
@@ -34,6 +38,7 @@ define([
 		this.initContainer();
 		this.initRenderComponent();
 		
+		_helperScene = new THREE.Scene();
 		_finalScene = _world.scene();
 		this.addSceneHelpers();
 
@@ -43,7 +48,7 @@ define([
 		_world.addProps();
 		_world.addLights();
 
-		this.initControls(this.camera, this.containerEl);
+		this.initControls(_helperCam, this.containerEl);
 
 	 	this.render();
 
@@ -97,8 +102,6 @@ define([
     };
 
 	Viewport.prototype.addSceneHelpers = function() {
-		this.sceneHelpers = new THREE.Scene();
-
 		var size = 500, step = 25;
 		var geometry = new THREE.Geometry();
 		var material = new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } );
@@ -118,7 +121,7 @@ define([
 		}
 
 		var grid = new THREE.Line( geometry, material, THREE.LinePieces );
-		this.sceneHelpers.add( grid );
+		_helperScene.add( grid );
 	};
 
 	Viewport.prototype.addCamera = function() {
@@ -127,16 +130,17 @@ define([
 			ASPECT = window.innerWidth / window.innerHeight,
 			NEAR = 1,
 			FAR = 5000;
-		this.camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR );
+		_helperCam = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR );
 
     	// the camera starts at 0,0,0 so pull it back
 		// default
-		this.camera.position.set( 500, 300, 1200 );
+		// this.camera.position.set( 1800, 500, 0);
+		_helperCam.position.set( 0, 3800, 0);
 
 		// straight down
 		// this.camera.position.set( 0, 800, 0 );
 
-		_finalScene.add( this.camera );
+		_helperScene.add( _helperCam );
 	};
 
 	Viewport.prototype.addProps = function() {
@@ -151,7 +155,7 @@ define([
 		);
 		sphere1.position.x = -200;
 
-		_finalScene.add(sphere1);
+		_helperScene.add(sphere1);
 		
 		var sphere2 = new THREE.Mesh(
 			new THREE.SphereGeometry(radius, segments, rings),
@@ -159,7 +163,7 @@ define([
 		);
 		sphere2.position.x = 200;
 
-		_finalScene.add(sphere2);
+		_helperScene.add(sphere2);
     };
 		
 	Viewport.prototype.animate = function() {
@@ -169,12 +173,29 @@ define([
 	};
 
 	Viewport.prototype.render = function() {
-		this.sceneHelpers.updateMatrixWorld();
+		_helperScene.updateMatrixWorld();
 		_finalScene.updateMatrixWorld();
 
 		this.renderer.clear();
-		this.renderer.render(_finalScene, this.camera);
-		this.renderer.render(this.sceneHelpers, this.camera);
+
+		var options = {
+			camera: 'final',
+			showGuides: true,
+			showGrid: true
+		};
+		
+		//TODO: set camera depth properties
+		if(options.camera=='final') {
+			this.renderer.render(_finalScene, _world.splineCamera);
+
+			if(options.showGrid===true){
+				this.renderer.render(_helperScene, _world.splineCamera);
+			}
+		}
+		else {
+			this.renderer.render(_finalScene, _helperCam);
+			this.renderer.render(_helperScene, _helperCam);
+		}		
 	};
 
 	return Viewport;

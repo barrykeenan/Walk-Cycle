@@ -7,8 +7,9 @@ define([
 
 ], function(FigureEight, Person, Walk) {
 
-	function Walk() {};
+	var _speed = 3;
 
+	function Walk() {};
 
 	Walk.prototype.animate = function(person) {
 
@@ -21,15 +22,27 @@ define([
 		var leftArmTimeline = this.swingArm(person.leftArm);
 		var rightArmTimeline = this.swingArm(person.rightArm, leftArmTimeline.duration()/2);
 
-		this.walkTorso(person.torsoPivot);
-		this.twistHead(person.head.rootObject());
+		var torsoTimeline = this.walkTorso(person.torsoPivot);
+		var headTimeline = this.twistHead(person.head.rootObject());
 
-		this.walkPelvis(person);
+		var pelvisTimeline = this.walkPelvis(person);
 
 		var rightLegTimeline = this.walkLeg(person.rightLeg);
 		var leftLegTimeline = this.walkLeg(person.leftLeg, rightLegTimeline.duration()/2);
 
-		this.leap(person.centre);
+		var leapTimeline = this.leap(person.centre);
+
+		leftArmTimeline.timeScale(_speed);
+		rightArmTimeline.timeScale(_speed);
+
+		torsoTimeline.timeScale(_speed);
+		headTimeline.timeScale(_speed);
+		pelvisTimeline.timeScale(_speed);
+		
+		rightLegTimeline.timeScale(_speed);
+		leftLegTimeline.timeScale(_speed);
+
+		leapTimeline.timeScale(_speed);
 	};
 
 	Walk.prototype.twistHead = function(head) {
@@ -51,6 +64,8 @@ define([
 			),
 			1.9 // use array of label: time
 		);
+
+		return timeline;
 	};
 
 	Walk.prototype.swingArm = function(arm, seek) {
@@ -156,6 +171,7 @@ define([
 			3.4
 		);
 
+		return timeline;
 	};
 
 	Walk.prototype.walkPelvis = function(person) {
@@ -193,6 +209,7 @@ define([
 			3.4
 		);
 
+		return timeline;
 	};
 
 	Walk.prototype.walkLeg = function(leg, seek) {
@@ -342,6 +359,7 @@ define([
 			3.3
 		);
 
+		return timeline;
 	};
 
 	return Walk;
