@@ -103,7 +103,7 @@ define([
 			repeat: -1
 		});
 
-		timeline.append( this.motionPath(_actors.bob.rootObject(), path, 20, {
+		timeline.append( new MotionPath(_actors.bob.rootObject(), path, 20, {
 			orientToPath: true,
 			snap: { y: false }
 		}));
@@ -116,19 +116,19 @@ define([
 			repeat: -1
 		});
 
-		timeline.append( this.motionPath(camera, path, 7.5, {
+		timeline.append( new MotionPath(camera, path, 7.5, {
 			position: { from: 0, to: 0.3 },
 			fn: this.updateCamera,
 			scope: this
 		}));
 
-		timeline.append( this.motionPath(camera, path, 2, {
+		timeline.append( new MotionPath(camera, path, 2, {
 			position: { from: 0.3, to: 0.7 },
 			fn: this.updateCamera,
 			scope: this
 		}));
 
-		timeline.append( this.motionPath(camera, path, 10.5, {
+		timeline.append( new MotionPath(camera, path, 10.5, {
 			position: { from: 0.7, to: 1 },
 			fn: this.updateCamera,
 			scope: this
@@ -140,45 +140,6 @@ define([
 	World.prototype.updateCamera = function(camera) {
 		camera.lookAt(_actors.bob.rootObject().position);
 		this.cameraHelper.update();
-	};
-
-	World.prototype.motionPath = function(object3D, path, duration, options) {
-		options = options || {};
-		options.snap = options.snap || {};
-		options.position = options.position || { from: 0, to: 1 };
-
-		var pathControl = {
-			position: 0
-		};
-
-		var tween = TweenMax.fromTo(pathControl, duration,
-			{ position: options.position.from },
-			{ position: options.position.to,
-
-			onUpdate: function(object3D, tween) {
-				var pathPosition = path.getPoint(pathControl.position);
-				
-				if(options.snap.x!==false) { object3D.position.x = pathPosition.x; }
-				if(options.snap.y!==false) { object3D.position.y = pathPosition.y; }
-				if(options.snap.z!==false) { object3D.position.z = pathPosition.z; }
-
-				if(options.orientToPath===true) {
-					var tangent = path.getTangent(pathControl.position);
-					var angle = Math.atan2(-tangent.z, tangent.x);
-					object3D.rotation.y = angle;
-				}
-
-				// callback
-				if(typeof options.fn === 'function') {
-					options.scope = options.scope || this;
-					options.fn.call(options.scope, object3D);
-				}
-			},
-			onUpdateParams:[object3D, "{self}"],
-			ease: Linear.easeNone
-		});
-
-		return tween;
 	};
 
     return World;
