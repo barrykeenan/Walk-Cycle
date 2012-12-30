@@ -44,17 +44,12 @@ define([
 
 		this.addCamera();
 
-		_world.addProps();
-		_world.addLights();
-
 		this.initControls(_helperCam, this.containerEl);
 
 	 	this.render();
 
 	 	// start animation loop
 	 	TweenMax.ticker.addEventListener("tick", this.animate.bind(this));
-
-		_world.startTimeline();
 	};
 
 	Viewport.prototype.initContainer = function() {
@@ -164,9 +159,11 @@ define([
 
 		//TODO: set camera depth properties
 		if(options.camera=='final') {
+			// call to world.prepareScene() ?
 			_world.skyCamera.rotation.copy( _world.sceneCamera.rotation );
-			this.renderer.render(_world.skyScene, _world.skyCamera);
 
+			// for each scene/camera pair
+			this.renderer.render(_world.skyScene, _world.skyCamera);
 			this.renderer.render(_finalScene, _world.sceneCamera);
 
 			if(options.showGrid===true){

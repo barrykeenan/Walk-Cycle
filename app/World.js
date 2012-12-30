@@ -43,7 +43,15 @@ define([
 		this.skyCamera;
 		this.skyScene = new THREE.Scene();
 
+		this.addGround();
+		this.addSky();
+		this.addEffects();
+		this.addActors();
+
+		this.addLights();
 		this.initCamera();
+
+		this.startTimeline();
 	};
 
 	World.prototype.initCamera = function() {
@@ -56,16 +64,7 @@ define([
 		this.skyCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 5000);
 	};
 
-	/**
-	 * Called from Viewport
-	 */
-	World.prototype.addProps = function() {
-
-		_scene.fog = new THREE.Fog( 0xffffff, 2000, 4000 );
-		// _scene.fog = new THREE.Fog( 0x9999ff, 3000, 5000 );
-
-		this.addGround();
-		this.addSky();
+	World.prototype.addActors = function() {
 
 		var personMaterials = {
 			skin: _materials.skin(),
@@ -88,9 +87,6 @@ define([
 		// _utils.strokePath(_paths.cameraPath, _colours.magenta);
     };
 
-    /**
-	 * Called from Viewport
-	 */
 	World.prototype.addGround = function() {
 
 		var gt = THREE.ImageUtils.loadTexture( "textures/terrain/grasslight-big.jpg" );
@@ -104,6 +100,11 @@ define([
 		ground.receiveShadow = true;
 
 		_scene.add( ground );
+	};
+
+	World.prototype.addEffects = function() {
+		_scene.fog = new THREE.Fog( 0xffffff, 2000, 4000 );
+		// _scene.fog = new THREE.Fog( 0x9999ff, 3000, 5000 );
 	};
 
 	/**
@@ -139,9 +140,6 @@ define([
 		this.skyScene.add( mesh );
 	}
 
-	/**
-	 * Called from Viewport
-	 */
     World.prototype.addLights = function() {
 		var light = new THREE.DirectionalLight( 0xffffff );
 		light.position.set( 1, 0.5, 0 ).normalize();
@@ -152,14 +150,9 @@ define([
 		_scene.add( light );
 	};
 
-    /**
-	 * Called from Viewport
-	 */
 	World.prototype.startTimeline = function() {
-
 		this.actorMotion(_actors.bob, _paths.walkPath);
 		this.cameraMotion(this.sceneCamera, _paths.cameraPath);
-
 	};
 
 	World.prototype.actorMotion = function(person, path) {
