@@ -132,12 +132,12 @@ define([
 		_helperCam = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR );
 
     	// the camera starts at 0,0,0 so pull it back
-		// default
-		// this.camera.position.set( 1800, 500, 0);
-		_helperCam.position.set( 0, 3800, 0);
+		_helperCam.position.set( 500, 500, 0);
+		// _helperCam.position.set( 1800, 500, 0);
 
 		// straight down
 		// this.camera.position.set( 0, 800, 0 );
+		// _helperCam.position.set( 0, 3800, 0);
 
 		_helperScene.add( _helperCam );
 	};
@@ -156,19 +156,27 @@ define([
 
 		var options = {
 			camera: 'final',
+			// camera: 'helper',
 			showGuides: true,
 			showGrid: false
 		};
-		
+
+
 		//TODO: set camera depth properties
 		if(options.camera=='final') {
-			this.renderer.render(_finalScene, _world.splineCamera);
+			_world.skyCamera.rotation.copy( _world.sceneCamera.rotation );
+			this.renderer.render(_world.skyScene, _world.skyCamera);
+
+			this.renderer.render(_finalScene, _world.sceneCamera);
 
 			if(options.showGrid===true){
-				this.renderer.render(_helperScene, _world.splineCamera);
+				this.renderer.render(_helperScene, _world.sceneCamera);
 			}
 		}
 		else {
+			_world.skyCamera.rotation.copy( _helperCam.rotation );
+			this.renderer.render(_world.skyScene, _world.skyCamera);
+
 			this.renderer.render(_finalScene, _helperCam);
 			this.renderer.render(_helperScene, _helperCam);
 		}		

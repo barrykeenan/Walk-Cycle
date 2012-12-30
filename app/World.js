@@ -14,6 +14,7 @@ define([
 
 ], function(Utils, MotionPath, FigureEight3, RaisedFigureEight3, Person, Walk) {
 
+	// private class variables
 	var _scene;
 	var _materials;
 	var _utils;
@@ -30,6 +31,29 @@ define([
 		_materials = materialFactory;
 		_scene = new THREE.Scene();
 		_utils = new Utils(_scene);
+
+		/**
+		 * Main camera
+		 */
+		this.sceneCamera;
+		
+		/**
+		 * Skybox camera position remains fixed - only rotates to face correct direction
+		 */
+		this.skyCamera;
+		this.skyScene = new THREE.Scene();
+
+		this.initCamera();
+	};
+
+	World.prototype.initCamera = function() {
+		this.sceneCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 5000);
+		// this.sceneCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 100);
+		_scene.add(this.sceneCamera);
+		this.cameraHelper = new THREE.CameraHelper(this.sceneCamera);
+		// _scene.add(this.cameraHelper);
+
+		this.skyCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 5000);
 	};
 
 	/**
@@ -38,8 +62,10 @@ define([
 	World.prototype.addProps = function() {
 
 		_scene.fog = new THREE.Fog( 0xffffff, 2000, 4000 );
+		// _scene.fog = new THREE.Fog( 0x9999ff, 3000, 5000 );
 
 		this.addGround();
+		this.addSky();
 
 		var personMaterials = {
 			skin: _materials.skin(),
@@ -60,16 +86,6 @@ define([
 
 		_paths.cameraPath = new RaisedFigureEight3(600, 200, 600);
 		// _utils.strokePath(_paths.cameraPath, _colours.magenta);
-
-
-		// Move this to the viewport
-
-		this.splineCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 5000);
-		// this.splineCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 100);
-		_scene.add(this.splineCamera);
-
-		this.cameraHelper = new THREE.CameraHelper(this.splineCamera);
-		_scene.add(this.cameraHelper);
     };
 
     /**
@@ -91,6 +107,39 @@ define([
 	};
 
 	/**
+	 * Skybox Code
+	 */
+	World.prototype.addSky = function() {
+
+		// load the cube textures
+		var urlPrefix	= "textures/miramar/miramar_";
+		var urls = [
+			urlPrefix + "ft.jpg", urlPrefix + "bk.jpg",
+			urlPrefix + "up.jpg", urlPrefix + "dn.jpg",
+			urlPrefix + "rt.jpg", urlPrefix + "lf.jpg"
+		];
+		var textureCube	= THREE.ImageUtils.loadTextureCube( urls );
+		textureCube.format = THREE.RGBFormat;
+		
+		// init the cube shadder
+		var shader = THREE.ShaderUtils.lib["cube"];
+		shader.uniforms[ "tCube" ].value = textureCube;
+
+		var material = new THREE.ShaderMaterial({
+			fragmentShader: shader.fragmentShader,
+			vertexShader: shader.vertexShader,
+			uniforms: shader.uniforms,
+			depthWrite: false,
+			side: THREE.BackSide
+		});
+
+		// build the skybox Mesh
+		mesh = new THREE.Mesh( new THREE.CubeGeometry( 4000, 4000, 4000 ), material );
+		// mesh = new THREE.Mesh( new THREE.CubeGeometry( 5000, 5000, 5000 ), material );
+		this.skyScene.add( mesh );
+	}
+
+	/**
 	 * Called from Viewport
 	 */
     World.prototype.addLights = function() {
@@ -109,7 +158,7 @@ define([
 	World.prototype.startTimeline = function() {
 
 		this.actorMotion(_actors.bob, _paths.walkPath);
-		this.cameraMotion(this.splineCamera, _paths.cameraPath);
+		this.cameraMotion(this.sceneCamera, _paths.cameraPath);
 
 	};
 
@@ -158,6 +207,8 @@ define([
 	World.prototype.updateCamera = function(camera) {
 		camera.lookAt(_actors.bob.rootObject().position);
 		this.cameraHelper.update();
+
+		// this.skyCamera.rotation.copy( camera.rotation );
 	};
 
 	World.prototype.scene = function() {
