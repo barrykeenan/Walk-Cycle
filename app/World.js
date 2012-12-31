@@ -6,13 +6,15 @@
 define([
 
 	"app/Utils",
+	"app/Skybox",
+
 	"app/MotionPath",
 	"app/shapes/FigureEight3",
 	"app/shapes/RaisedFigureEight3",
 	"app/person/model/Person",
 	"app/person/animations/Walk"
 
-], function(Utils, MotionPath, FigureEight3, RaisedFigureEight3, Person, Walk) {
+], function(Utils, Skybox, MotionPath, FigureEight3, RaisedFigureEight3, Person, Walk) {
 
 	// private class variables
 	var _scene;
@@ -114,30 +116,15 @@ define([
 
 		// load the cube textures
 		var urlPrefix	= "textures/miramar/miramar_";
-		var urls = [
+		var textures = [
 			urlPrefix + "ft.jpg", urlPrefix + "bk.jpg",
 			urlPrefix + "up.jpg", urlPrefix + "dn.jpg",
 			urlPrefix + "rt.jpg", urlPrefix + "lf.jpg"
 		];
-		var textureCube	= THREE.ImageUtils.loadTextureCube( urls );
-		textureCube.format = THREE.RGBFormat;
-		
-		// init the cube shadder
-		var shader = THREE.ShaderUtils.lib["cube"];
-		shader.uniforms[ "tCube" ].value = textureCube;
 
-		var material = new THREE.ShaderMaterial({
-			fragmentShader: shader.fragmentShader,
-			vertexShader: shader.vertexShader,
-			uniforms: shader.uniforms,
-			depthWrite: false,
-			side: THREE.BackSide
-		});
+		var skybox = new Skybox(textures);
 
-		// build the skybox Mesh
-		mesh = new THREE.Mesh( new THREE.CubeGeometry( 4000, 4000, 4000 ), material );
-		// mesh = new THREE.Mesh( new THREE.CubeGeometry( 5000, 5000, 5000 ), material );
-		this.skyScene.add( mesh );
+		this.skyScene.add(skybox);
 	}
 
     World.prototype.addLights = function() {
