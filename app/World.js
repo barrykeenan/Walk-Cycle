@@ -6,6 +6,7 @@
 define([
 
 	"app/Utils",
+	"app/TexturedPlane",
 	"app/Skybox",
 
 	"app/MotionPath",
@@ -14,7 +15,18 @@ define([
 	"app/person/model/Person",
 	"app/person/animations/Walk"
 
-], function(Utils, Skybox, MotionPath, FigureEight3, RaisedFigureEight3, Person, Walk) {
+], function(
+	Utils,
+	TexturedPlane,
+	Skybox,
+
+	MotionPath,
+
+	FigureEight3,
+	RaisedFigureEight3,
+	Person,
+	Walk
+) {
 
 	// private class variables
 	var _scene;
@@ -90,16 +102,7 @@ define([
     };
 
 	World.prototype.addGround = function() {
-
-		var gt = THREE.ImageUtils.loadTexture( "textures/terrain/grasslight-big.jpg" );
-		var gg = new THREE.PlaneGeometry( 16000, 16000 );
-		var gm = new THREE.MeshPhongMaterial( { color: 0xffffff, map: gt, perPixel: true } );
-
-		var ground = new THREE.Mesh( gg, gm );
-		ground.material.map.repeat.set( 64, 64 );
-		ground.material.map.wrapS = ground.material.map.wrapT = THREE.RepeatWrapping;
-		ground.rotation.x = - Math.PI/2;
-		ground.receiveShadow = true;
+		var ground = new TexturedPlane("textures/terrain/grasslight-big.jpg");
 
 		_scene.add( ground );
 	};
