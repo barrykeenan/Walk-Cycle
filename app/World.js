@@ -6,8 +6,8 @@
 define([
 
 	"app/Utils",
-	"app/TexturedPlane",
-	"app/Skybox",
+	"app/mesh/TexturedPlane",
+	"app/mesh/Skybox",
 
 	"app/MotionPath",
 	"app/shapes/FigureEight3",

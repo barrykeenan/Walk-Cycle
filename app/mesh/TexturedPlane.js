@@ -1,7 +1,7 @@
 /**
  * TexturedPlane @extends THREE.Mesh
  * 
- * @type {Skybox}
+ * @type {TexturedPlane}
  */
 define([
 

@@ -14,7 +14,7 @@ define([
 		var textureCube	= THREE.ImageUtils.loadTextureCube(textures);
 		textureCube.format = THREE.RGBFormat;
 		
-		// init the cube shadder
+		// init the cube shader
 		var shader = THREE.ShaderUtils.lib["cube"];
 		shader.uniforms[ "tCube" ].value = textureCube;
 
