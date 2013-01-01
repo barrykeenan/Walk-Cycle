@@ -123,12 +123,12 @@ define([
 		var VIEW_ANGLE = 50,
 			ASPECT = window.innerWidth / window.innerHeight,
 			NEAR = 1,
-			FAR = 5000;
+			FAR = 10000;
 		_helperCam = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR );
 
     	// the camera starts at 0,0,0 so pull it back
-		_helperCam.position.set( 500, 500, 0);
-		// _helperCam.position.set( 1800, 500, 0);
+		_helperCam.position.set( -1500, 4000, 4000);
+		_helperCam.position.set( -1500, 1000, 1000);
 
 		// straight down
 		// this.camera.position.set( 0, 800, 0 );

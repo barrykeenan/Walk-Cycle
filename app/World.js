@@ -111,8 +111,7 @@ define([
 	};
 
 	World.prototype.addEffects = function() {
-		_scene.fog = new THREE.Fog( 0xffffff, 2000, 4000 );
-		// _scene.fog = new THREE.Fog( 0x9999ff, 3000, 5000 );
+		_scene.fog = new THREE.Fog( 0x34583e, 500, 7000 );
 	};
 
 	/**
@@ -134,13 +133,28 @@ define([
 	}
 
     World.prototype.addLights = function() {
+
+    	// shadow colour?
+    	// var ambient = new THREE.AmbientLight( 0x333333 );
+    	var ambient = new THREE.AmbientLight( 0x333344 );
+		// _scene.add( ambient );
+
     	// add a sphere helper to position properly
         pointLight = new THREE.PointLight(0xFFFFFF);
-        pointLight.position.x = 1000;
-        pointLight.position.y = 2500;
-        // pointLight.position.z = 3000;
-        // pointLight.intensity = 2;
+        pointLight.position.x = -4000;
+        pointLight.position.y = 2000; // height
+        pointLight.position.z = 4000;
+        pointLight.intensity = 2;
+        pointLight.distance = 10000; // area of effect
         _scene.add(pointLight);
+
+		var helperWidth = 100;
+        var lightHelper = new THREE.Mesh(
+	 		new THREE.SphereGeometry(helperWidth),
+	 		_materials.wireframe()
+	 	);
+	 	lightHelper.position = pointLight.position;
+	 	_scene.add(lightHelper);
 
 		var light = new THREE.DirectionalLight( 0xffffff );
 		light.position.set( 1, 0.5, 0 ).normalize();
@@ -149,7 +163,7 @@ define([
 
 		var light = new THREE.DirectionalLight( 0xffffff, 0.5 );
 		light.position.set( - 1, - 0.5, 0 ).normalize();
-		// light.intensity = 8.6;
+		// light.intensity = 1;
 		_scene.add( light );
 	};
 
@@ -159,8 +173,8 @@ define([
 	};
 
 	World.prototype.actorMotion = function(person, path) {
-		// var walkAnimation = new Walk();
-		// walkAnimation.animate(_actors.bob);
+		var walkAnimation = new Walk();
+		walkAnimation.animate(_actors.bob);
 
 		var timeline = new TimelineMax({
 			repeat: -1

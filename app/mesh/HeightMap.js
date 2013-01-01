@@ -11,61 +11,63 @@ define([
 ], function() {
 
 	function HeightMap(texture_url) {
-		 // load the heightmap we created as a texture
-        var texture = THREE.ImageUtils.loadTexture('textures/terrain/combined.png');
- 
-        // load two other textures we'll use to make the map look more real
-        // var detailTexture = THREE.ImageUtils.loadTexture("textures/terrain/bg.jpg");
-        var detailTexture = THREE.ImageUtils.loadTexture("textures/terrain/grasslight-big.jpg");
- 
-        // the following configuration defines how the terrain is rendered
+
+        var heightMap = THREE.ImageUtils.loadTexture('textures/terrain/hills4.png');
+		var normalMapTexture = THREE.ImageUtils.loadTexture( "textures/terrain/grasslight-big-nm.jpg");
+
+        var baseTexture = THREE.ImageUtils.loadTexture("textures/terrain/grasslight-big.jpg");
+        var diffuseTexture2 = THREE.ImageUtils.loadTexture("textures/terrain/backgrounddetailed6.jpg");
+
+ 		normalMapTexture.wrapS = normalMapTexture.wrapT = THREE.RepeatWrapping;
+ 		baseTexture.wrapS = baseTexture.wrapT = THREE.RepeatWrapping;
+        diffuseTexture2.wrapS = diffuseTexture2.wrapT = THREE.RepeatWrapping;
+
         var terrainShader = THREE.ShaderTerrain[ "terrain" ];
         var uniformsTerrain = THREE.UniformsUtils.clone(terrainShader.uniforms);
 
-        // how to treat abd scale the normal texture
-        uniformsTerrain[ "tNormal" ].value = detailTexture;
-        uniformsTerrain[ "uNormalScale" ].value = 1;
- 
-        // the displacement determines the height of a vector, mapped to
-        // the heightmap
-        uniformsTerrain[ "tDisplacement" ].value = texture;
-        uniformsTerrain[ "uDisplacementScale" ].value = 100;
- 
-        // the following textures can be use to finetune how
-        // the map is shown. These are good defaults for simple
-        // rendering
-        uniformsTerrain[ "tDiffuse1" ].value = detailTexture;
-        uniformsTerrain[ "tDetail" ].value = detailTexture;
+        // the displacement determines the height of a vector, mapped to the heightmap
+        uniformsTerrain[ "tDisplacement" ].value = heightMap;
+        uniformsTerrain[ "uDisplacementScale" ].value = 400;
+        // uniformsTerrain[ "uOffset" ].value.set(1, 100);
+
+        // normal map (bump map) detail
+		uniformsTerrain[ "tDetail" ].value = normalMapTexture;
+
+        // high texture
+        uniformsTerrain[ "tDiffuse1" ].value = baseTexture;
         uniformsTerrain[ "enableDiffuse1" ].value = true;
+        // low texture
+        uniformsTerrain[ "tDiffuse2" ].value = diffuseTexture2;
         uniformsTerrain[ "enableDiffuse2" ].value = true;
-        uniformsTerrain[ "enableSpecular" ].value = true;
+
+        // uniformsTerrain[ "tSpecular" ].value = normalMapTexture;
+        // uniformsTerrain[ "enableSpecular" ].value = true;
+
+        // normal map
+        uniformsTerrain[ "tNormal" ].value = heightMap;
+        uniformsTerrain[ "uNormalScale" ].value = 3;
  
-        // diffuse is based on the light reflection
-        uniformsTerrain[ "uDiffuseColor" ].value.setHex(0xcccccc);
         // uniformsTerrain[ "uDiffuseColor" ].value.setHex(0xffffff);
-        uniformsTerrain[ "uSpecularColor" ].value.setHex(0xff0000);
         // uniformsTerrain[ "uSpecularColor" ].value.setHex(0xffffff);
-        // is the base color of the terrain
-        uniformsTerrain[ "uAmbientColor" ].value.setHex(0x0000cc);
         // uniformsTerrain[ "uAmbientColor" ].value.setHex(0xffffff);
  
-        // how shiny is the terrain
-        uniformsTerrain[ "uShininess" ].value = 3;
+        uniformsTerrain[ "uShininess" ].value = 30;
+
+        // uniformsTerrain[ "uRepeatBase" ].value.set(2, 2);
+        uniformsTerrain[ "uRepeatOverlay" ].value.set(32, 32);
  
-        // handles light reflection
-        uniformsTerrain[ "uRepeatOverlay" ].value.set(3, 3);
- 
-        // configure the material that reflects our terrain
+        // @extends Material
         var material = new THREE.ShaderMaterial({
             uniforms: uniformsTerrain,
             vertexShader: terrainShader.vertexShader,
             fragmentShader: terrainShader.fragmentShader,
             lights: true,
-            fog: false
+            fog: true
         });
  
         // we use a plain to render as terrain
         var geometryTerrain = new THREE.PlaneGeometry(10000, 10000, 256, 256);
+        // var geometryTerrain = new THREE.PlaneGeometry(8000, 8000, 256, 256);
         geometryTerrain.computeFaceNormals();
         geometryTerrain.computeVertexNormals();
         geometryTerrain.computeTangents();
@@ -78,6 +80,7 @@ define([
 
 		// config
 		this.rotation.x = - Math.PI/2;
+
 	};
 
 	HeightMap.prototype = Object.create( THREE.Mesh.prototype );
