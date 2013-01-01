@@ -7,6 +7,7 @@ define([
 
 	"app/Utils",
 	"app/mesh/TexturedPlane",
+	"app/mesh/HeightMap",
 	"app/mesh/Skybox",
 
 	"app/MotionPath",
@@ -18,6 +19,7 @@ define([
 ], function(
 	Utils,
 	TexturedPlane,
+	HeightMap,
 	Skybox,
 
 	MotionPath,
@@ -102,7 +104,8 @@ define([
     };
 
 	World.prototype.addGround = function() {
-		var ground = new TexturedPlane("textures/terrain/grasslight-big.jpg");
+		// var ground = new TexturedPlane("textures/terrain/grasslight-big.jpg");
+		var ground = new HeightMap("textures/terrain/grasslight-big.jpg");
 
 		_scene.add( ground );
 	};
@@ -131,12 +134,22 @@ define([
 	}
 
     World.prototype.addLights = function() {
+    	// add a sphere helper to position properly
+        pointLight = new THREE.PointLight(0xFFFFFF);
+        pointLight.position.x = 1000;
+        pointLight.position.y = 2500;
+        // pointLight.position.z = 3000;
+        // pointLight.intensity = 2;
+        _scene.add(pointLight);
+
 		var light = new THREE.DirectionalLight( 0xffffff );
 		light.position.set( 1, 0.5, 0 ).normalize();
+		// light.intensity = 8.6;
 		_scene.add( light );
 
 		var light = new THREE.DirectionalLight( 0xffffff, 0.5 );
 		light.position.set( - 1, - 0.5, 0 ).normalize();
+		// light.intensity = 8.6;
 		_scene.add( light );
 	};
 
@@ -146,8 +159,8 @@ define([
 	};
 
 	World.prototype.actorMotion = function(person, path) {
-		var walkAnimation = new Walk();
-		walkAnimation.animate(_actors.bob);
+		// var walkAnimation = new Walk();
+		// walkAnimation.animate(_actors.bob);
 
 		var timeline = new TimelineMax({
 			repeat: -1
