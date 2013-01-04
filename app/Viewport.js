@@ -150,8 +150,8 @@ define([
 		this.renderer.clear();
 
 		var options = {
-			camera: 'final',
-			// camera: 'helper',
+			// camera: 'final',
+			camera: 'helper',
 			showGuides: true,
 			showGrid: false
 		};

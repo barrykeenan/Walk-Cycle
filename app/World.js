@@ -59,6 +59,11 @@ define([
 		this.skyCamera;
 		this.skyScene = new THREE.Scene();
 
+		/**
+		 * All meshes that animate
+		 */
+		this.morphs = [];
+
 		this.addGround();
 		this.addSky();
 		this.addEffects();
@@ -67,7 +72,7 @@ define([
 		this.addLights();
 		this.initCamera();
 
-		this.startTimeline();
+		// this.startTimeline();
 	};
 
 	World.prototype.initCamera = function() {
@@ -81,6 +86,7 @@ define([
 	};
 
 	World.prototype.addActors = function() {
+		var me = this;
 
 		var personMaterials = {
 			skin: _materials.skin(),
@@ -92,8 +98,9 @@ define([
 			default: _materials.solid()
 		};
 
+		// perhaps 1 = 1m
 		_actors.bob = new Person(personMaterials, 100);
-		_scene.add(_actors.bob.rootObject());
+		// _scene.add(_actors.bob.rootObject());
 
 
 		_paths.walkPath = new FigureEight3(400, 200);
@@ -101,6 +108,31 @@ define([
 
 		_paths.cameraPath = new RaisedFigureEight3(600, 200, 600);
 		// _utils.strokePath(_paths.cameraPath, _colours.magenta);
+
+		var loader = new THREE.JSONLoader();
+		var lamp;
+	    loader.load("models/lamp_animated.js", function(geometry) {
+
+			var material = geometry.materials[ 0 ];
+			material.morphTargets = true;
+
+			var faceMaterial = new THREE.MeshFaceMaterial();
+			var morph = new THREE.MorphAnimMesh(geometry, faceMaterial);
+
+			// one second duration
+			morph.duration = 1000;
+			morph.scale.set(50,50,50);
+
+
+			morph.matrixAutoUpdate = false;
+			morph.updateMatrix();
+
+			_scene.add( morph );
+
+			me.morphs.push( morph );
+
+			me.lampMotion(morph);
+	    });
     };
 
 	World.prototype.addGround = function() {
@@ -186,6 +218,31 @@ define([
 		}));
 
 		timeline.seek(1);
+	};
+
+	World.prototype.lampMotion = function(morph) {
+
+		console.log(this.morphs);
+
+		var timeline2 = new TimelineMax({
+			repeat: -1
+		});
+
+		// convoluted. Tween should have a delta property that can use
+		var pathControl = {
+			position: 0
+		};
+		var tween = TweenMax.fromTo(pathControl, 1,
+			{ position: 0 },
+			{ position: 1 ,
+			ease: Linear.easeNone
+		});
+
+		tween.eventCallback('onUpdate', function(object3D, tween){
+			object3D.updateAnimation( 10 );
+		}, [this.morphs[0], "{self}"], this);
+
+		timeline2.insert(tween);
 	};
 
 	World.prototype.cameraMotion = function(camera, path) {
